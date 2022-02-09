@@ -1,0 +1,45 @@
+{
+  "name": "gatho-events",
+  "private": true,
+  "scripts": {
+    "dev": "next dev",
+    "build": "npm run test && npm run typecheck && npx prisma generate && next build && cp -r node_modules/.prisma .",
+    "start": "cp -r .prisma node_modules/ && next start -p $PORT",
+    "test": "npx jest test/*",
+    "lint": "next lint",
+    "typecheck": "npx tsc",
+    "prepare-deploy": "rm -f deploy.zip && npm i && npx tsc && yarn build && zip deploy.zip -r prisma/ .prisma/ .next/ public/ package-lock.json package.json",
+    "deploy:prod": "yarn run prepare-deploy && eb deploy Matrixevents-env --staged",
+    "deploy:staging": "yarn run prepare-deploy && eb deploy matrix-events-dev --staged",
+    "deploy:prod:eu": "yarn run prepare-deploy && eb deploy gathoeu-env --staged",
+    "logs:dev": "eb logs matrix-events-dev",
+    "logs:prod": "eb logs Matrixevents-env",
+    "logs:prod:eu": "eb logs gathoeu-env"
+  },
+  "dependencies": {
+    "@next-auth/prisma-adapter": "^0.5.2-next.19",
+    "@prisma/client": "^3.5.0",
+    "accept-language-parser": "^1.5.0",
+    "next": "12.0.4",
+    "next-auth": "^4.0.0-beta.7",
+    "next-plausible": "^3.1.4",
+    "nodemailer": "^6.7.1",
+    "pg": "^8.7.1",
+    "react": "17.0.2",
+    "react-dom": "17.0.2",
+    "ts-prune": "^0.10.3"
+  },
+  "devDependencies": {
+    "@types/accept-language-parser": "^1.5.3",
+    "@types/jest": "^27.0.3",
+    "@types/node": "^16.11.7",
+    "@types/pg": "^8.6.1",
+    "@types/react": "^17.0.35",
+    "eslint": "7.32.0",
+    "eslint-config-next": "12.0.4",
+    "jest": "^27.5.0",
+    "prisma": "^3.5.0",
+    "ts-jest": "^27.1.3",
+    "typescript": "^4.4.4"
+  }
+}

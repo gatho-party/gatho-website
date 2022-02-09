@@ -1,0 +1,508 @@
+:root {
+  --background-color: white;
+  --primary-colour: rgb(0, 183, 255);
+  --landing-blend: multiply;
+  /* --primary-colour: rgb(0 171 255); */
+  --light-grey: rgb(189, 189, 189);
+  --dark-grey: rgb(119, 119, 119);
+  --green: green;
+  --red: red;
+  --yellow: orange;
+
+  /** Styles from NextJS buttons */
+  --color-text: #000;
+  --color-primary: #444;
+  --color-control-border: #bbb;
+  --color-button-active-background: #f9f9f9;
+  --color-button-active-border: #aaa;
+  --color-seperator: #ccc;
+  --border-width: 1px;
+  --border-radius: 0.3rem;
+  --color-error: #c94b4b;
+  --color-info: #157efb;
+  --color-info-text: #fff;
+}
+
+/* Display-P3 color, when supported. */
+@supports (color: color(display-p3 1 1 1)) {
+  :root {
+    --background-color: white;
+    --primary-colour: color(display-p3 0 0.705 1);
+    --landing-blend: multiply;
+    /* --primary-colour: color(display-p3 0 0.705 1); */
+    --light-grey: rgb(189, 189, 189);
+    --dark-grey: rgb(119, 119, 119);
+    --green: color(display-p3 0 0.73 0.015);
+    --red: color(display-p3 1 0 0);
+    --yellow: color(display-p3 1 0.777 0);
+  }
+}
+
+html,
+body {
+  padding: 0;
+  margin: 0;
+  font-family: Helvetica Neue, BlinkMacSystemFont, Segoe UI, Roboto, Oxygen,
+    Ubuntu, Cantarell, Fira Sans, Droid Sans, sans-serif;
+  background-color: var(--background-color);
+  color: var(--dark-grey);
+}
+
+h1 {
+  font-family: Helvetica Neue;
+  font-weight: 500;
+  letter-spacing: -2px;
+}
+
+a {
+  /* color: inherit;
+  text-decoration: none; */
+}
+
+* {
+  box-sizing: border-box;
+}
+
+/* input {
+  width: 200px;
+} */
+
+sub {
+  font-size: 20px;
+}
+
+.purple {
+  color: #950099;
+}
+
+/* .event h1 {
+  line-height: 0px;
+} */
+/* Gatho title */
+.event h1 a {
+  display: inline-block;
+  line-height: 0px;
+  /* color: #950099; */
+  opacity: 0.37;
+  text-decoration: underline;
+}
+
+/* Event title */
+.event h2 {
+  margin-top: 0px;
+  opacity: 0.8;
+}
+
+/* Adding new guest to event */
+#addGuestButton {
+  width: 100px;
+}
+#addGuestInput {
+  width: calc(100% - 100px);
+}
+
+ul.guestsByStatus li {
+  margin-bottom: 10px;
+}
+ul.guestsByStatus {
+  list-style: none;
+  padding-inline-start: 0px; /* No indent */
+}
+ul.guestsByStatus .name {
+  line-height: 30px;
+  font-weight: 800;
+
+  font-size: 50px;
+  font-size: calc(5vw + 40px);
+  line-height: 0.7;
+  letter-spacing: calc(-0.5vw - 1px);
+  margin-bottom: 20px;
+}
+/* DM on Matrix */
+p.dm-via-matrix {
+  font-size: 18px;
+  margin-top: 5px;
+  letter-spacing: initial;
+}
+
+button.copy-invite-button {
+  margin-left: 10px;
+  vertical-align: text-bottom;
+}
+
+.landingLogo {
+  opacity: 0.6;
+  /* padding: 10px; */
+}
+
+.signin-button {
+  text-align: center;
+}
+.signin-button button {
+  margin-bottom: 0px;
+  margin-bottom: 20px;
+  padding: 14px 28px;
+}
+
+.landingHeading,
+a {
+  color: var(--primary-colour);
+}
+.landingHeading2 {
+  color: var(--logo-colour);
+}
+
+.landingHeading,
+#signin-landing {
+  max-width: 70vw;
+  margin-left: auto;
+  margin-right: auto;
+}
+/* The text below the logo */
+.landingHeading {
+  margin-top: 10px;
+  font-size: 35px;
+  mix-blend-mode: var(--landing-blend);
+  /* mix-blend-mode: hard-light; */
+  letter-spacing: -1px;
+  line-height: 0.9;
+}
+
+h5 {
+  color: var(--light-grey);
+  letter-spacing: -1px;
+  font-size: 20px;
+  margin-bottom: 0px;
+  line-height: 0.95;
+}
+
+h4 {
+  color: var(--primary-colour);
+  letter-spacing: -1px;
+  font-size: 30px;
+  margin-bottom: 0px;
+  line-height: 0.95;
+}
+h4 a,
+h5 a {
+  text-decoration: underline;
+  color: inherit;
+}
+.landing h3,
+.footer h3 {
+  color: var(--primary-colour);
+  letter-spacing: -2px;
+  font-size: 50px;
+  margin-bottom: 0px;
+  line-height: 0.9;
+}
+p {
+  font-size: 18px;
+  margin-top: 3px;
+}
+
+img {
+  width: 100%;
+  height: auto;
+}
+
+.mockup-container {
+  overflow-x: hidden;
+}
+img.mockup {
+  width: 100vw;
+  object-fit: cover;
+  margin-top: -80px;
+}
+
+@media only screen and (min-width: 700px) {
+  .left {
+    float: left;
+    width: 48%;
+    margin-right: 2%;
+    text-align: left;
+  }
+  .left-without-float {
+    width: 48%;
+    margin-right: 2%;
+    text-align: left;
+  }
+  .right {
+    float: left;
+    width: 50%;
+    text-align: left;
+  }
+  .footerContent {
+    max-width: 60vw;
+  }
+}
+
+.footer {
+  border-top: 2px solid #eaeaea;
+}
+.footer p {
+  font-size: initial;
+}
+
+/*  Things like time/place that can be edited (need a button to go on right) */
+.editable {
+  padding-right: 10px;
+}
+
+.editable-event-heading h2 {
+  display: inline-block;
+}
+h2 {
+  margin-top: 0px;
+  margin-bottom: 5px;
+}
+
+.editable-event-heading h2,
+.editable-signed-in {
+  color: var(--dark-grey);
+}
+
+.editable-event-heading button {
+  margin-left: 5px;
+}
+
+.event-name {
+  line-height: 0.9;
+  color: var(--dark-grey);
+  font-size: 60px;
+  letter-spacing: -4px;
+}
+
+.whitespace {
+  white-space: pre-line;
+}
+.event-description {
+  font-size: 20px;
+  /* color: black; */
+  max-width: 700px;
+}
+
+.gathoLogo {
+  margin-top: 0px;
+}
+
+/* Size of gatho logo on mobile */
+.gathoLogo.smallEventLogo {
+  max-width: 100px;
+}
+
+@media only screen and (min-width: 600px) {
+  .gathoLogo {
+    max-width: 200px;
+  }
+  .loggedInDisplay {
+    float: right;
+    text-align: right;
+  }
+}
+.loggedInDisplay {
+  margin-bottom: 10px;
+  font-weight: 900;
+  letter-spacing: -0.25px;
+  color: var(--light-grey);
+}
+.loggedInDisplay button {
+  padding: 0px 5px;
+  font-size: 15px;
+}
+
+.matrix_room_address.editable,
+.matrix_rsvp_message.editable {
+  font-size: 15px;
+}
+
+/* No margin between Description title and text */
+.event-description.title {
+  margin-bottom: 0px;
+}
+
+ul.guestsByStatus.notgoing li {
+  color: var(--red);
+}
+ul.guestsByStatus.going li {
+  color: var(--green);
+}
+ul.guestsByStatus.maybe li {
+  color: var(--yellow);
+}
+ul.guestsByStatus.invited li {
+  color: var(--dark-grey);
+}
+
+.event-details-component h1 {
+  margin-bottom: 0px;
+  margin-top: 0px;
+}
+
+.event-details-component h1 a {
+  color: var(--primary-colour);
+  text-decoration: underline;
+}
+.event-details-component h3 {
+  margin-bottom: 0px;
+  margin-top: 0px;
+}
+.rsvp-prompt-component h3 {
+  font-size: 40px;
+  font-style: italic;
+  margin-bottom: 0px;
+  margin-top: 5px;
+}
+
+.rsvp-prompt-component button,
+button.create-new-event {
+  margin-right: 5px;
+  padding: 14px 28px;
+}
+
+p.dm-via-matrix a {
+  color: var(--primary-colour);
+}
+.join-group-chat a {
+  color: var(--primary-colour);
+}
+.join-group-chat {
+  margin-top: 0px;
+}
+
+#after-mockup-img {
+  margin-top: calc(-8vw - 150px);
+}
+.getting-started-link {
+  text-align: center;
+}
+
+img.mockup {
+  /* height: initial; */
+  width: 150%;
+  margin-left: -25%;
+}
+@media only screen and (min-width: 700px) {
+  .logobox {
+    margin-left: 10vw;
+    margin-top: 100px;
+    max-width: 50vw;
+    float: left;
+  }
+
+  .landingHeading {
+    margin-top: initial;
+    width: initial;
+    font-size: 25px;
+  }
+
+  img.mockup {
+    margin-top: initial;
+  }
+  .mockup-container {
+    float: right;
+    margin-right: 0px;
+    width: 40vw;
+  }
+  .after-landing {
+    clear: left;
+  }
+
+  .logobox,
+  #after-mockup-img {
+    margin-left: 5vw;
+    margin-right: 5vw;
+    padding: 0 1rem;
+  }
+  #after-mockup-img {
+    margin-top: -30px;
+  }
+  .getting-started-panel {
+    clear: right;
+  }
+  .getting-started-panel,
+  .getting-started-panel .signin-button {
+    text-align: left;
+  }
+
+  /** Put sign in button to left */
+  #signin-landing button {
+    margin: auto;
+  }
+
+  .signin-notice {
+    opacity: 0;
+    transition: opacity 0.3s;
+    text-align: center;
+  }
+}
+
+.event-matrix-blurb {
+  max-width: 600px;
+}
+#getting-started-body {
+  max-width: 600px;
+}
+#getting-started-body .signin-button {
+  text-align: left;
+}
+button {
+  cursor: pointer;
+}
+
+input[type] {
+  background: var(--background-color);
+  border: var(--border-width) solid var(--color-control-border);
+  border-radius: var(--border-radius);
+  box-shadow: inset 0 0.1rem 0.2rem rgb(0 0 0 / 20%);
+  box-sizing: border-box;
+  color: var(--color-text);
+  display: block;
+  font-size: 1rem;
+  padding: 0.5rem 1rem;
+  width: 100%;
+}
+
+.signin a.button,
+.signin button,
+.signin input[type="text"] {
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+a.button,
+button {
+  border: var(--border-width) solid var(--color-control-border);
+  border-radius: var(--border-radius);
+  box-shadow: 0 0.15rem 0.3rem rgba(0, 0, 0, 0.15),
+    inset 0 0.1rem 0.2rem var(--background-color),
+    inset 0 -0.1rem 0.1rem rgba(0, 0, 0, 0.05);
+  font-size: 1rem;
+  font-weight: 500;
+  position: relative;
+  transition: all 0.1s ease-in-out;
+}
+
+a.button,
+a.button:link,
+a.button:visited,
+button {
+  background-color: var(--background-color);
+  color: var(--color-primary);
+}
+#signin-landing button {
+  margin: initial;
+  display: block;
+  margin-top: 10px;
+
+  margin: 0 0 0.75rem;
+  padding: 0.75rem 1rem;
+}
+
+.signin-notice {
+  opacity: 0;
+  transition: opacity 0.3s;
+  text-align: left;
+  display: block;
+}
