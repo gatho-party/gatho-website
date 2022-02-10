@@ -4,6 +4,7 @@ import {
   eventResponses,
   findGuestByMagicCode,
   getEventByCode,
+  getHostUserByEmail,
 } from "../../src/db";
 import Head from "next/head";
 import {
@@ -74,6 +75,7 @@ interface EventProps extends GeoProps {
   responses?: EventResponse[] | null;
   viewingGuest?: GuestSQL | null;
   email?: string | null;
+  weAreTheHost?: boolean | undefined;
 }
 async function rsvp(status: Status, magic_code: string) {
   const data: RSVPPayload = {
@@ -132,12 +134,13 @@ function GuestsByStatus({
   responses,
   status,
   event,
+  weAreTheHost
 }: {
   responses: EventResponse[];
   status: Status;
   event: EventSQL;
+  weAreTheHost?: boolean;
 }) {
-  const { data: session } = useSession();
   return (
     <ul className={`guestsByStatus ${status}`}>
       {responses
@@ -158,7 +161,7 @@ function GuestsByStatus({
             <li key={r.guest_id}>
               <span className="name">{name}</span>
 
-              {session ? (
+              {weAreTheHost ? (
                 <button
                   className={"copy-invite-button"}
                   onClick={() => copyToClipboard(inviteURL)}
@@ -201,9 +204,11 @@ function countGuestsByStatus(
 function ResponsesView({
   event,
   responses,
+  weAreTheHost
 }: {
   event: EventSQL;
   responses: EventResponse[];
+  weAreTheHost?: boolean
 }) {
   return (
     <div>
@@ -212,7 +217,7 @@ function ResponsesView({
           <h3>
             {statusMap[status]} ({countGuestsByStatus(responses, status)})
           </h3>
-          <GuestsByStatus responses={responses} status={status} event={event} />
+          <GuestsByStatus responses={responses} status={status} event={event} weAreTheHost={weAreTheHost}/>
         </div>
       ))}
     </div>
@@ -260,12 +265,13 @@ function AddNewGuest({ event }: { event: EventSQL }) {
   );
 }
 
-function Page({
+function EventPage({
   event,
   responses,
   viewingGuest,
   countryCode,
   inEurope,
+  weAreTheHost
 }: EventProps) {
   const { data: session } = useSession();
   if (event === null || event === undefined) {
@@ -323,7 +329,7 @@ function Page({
             </a>
           </Link>
 
-          {session ? (
+          {weAreTheHost ? (
             <EditableEventHeading
               headingText={event.name}
               className={"event-name"}
@@ -335,7 +341,7 @@ function Page({
             <h2 className={"event-name editable-signed-in"}>{event.name}</h2>
           )}
 
-          {session ? (
+          {weAreTheHost ? (
             <EditableEventHeading
               headingText={event.place}
               prefix={"📍 "}
@@ -346,7 +352,7 @@ function Page({
           ) : (
             <h2 className={"editable-signed-in"}>📍 {event.place}</h2>
           )}
-          {session ? (
+          {weAreTheHost ? (
             <EditableEventHeading
               headingText={event.time}
               prefix={"🕦 "}
@@ -358,7 +364,7 @@ function Page({
             <h2>🕦 {event.time}</h2>
           )}
 
-          {session ? (
+          {weAreTheHost ? (
             <div className="event-matrix-blurb">
               <p>
                 Optional: Create a Matrix room and invite the Gatho Bot (
@@ -390,7 +396,7 @@ function Page({
             </p>
           ) : null}
 
-          {session ? (
+          {weAreTheHost ? (
             <div>
               <h2 className="event-description title">Event description:</h2>
               <EditableEventHeading
@@ -408,12 +414,12 @@ function Page({
             </h2>
           )}
 
-          {session ? <AddNewGuest event={event} /> : null}
+          {weAreTheHost ? <AddNewGuest event={event} /> : null}
           {viewingGuest !== null && viewingGuest !== undefined ? (
             <RSVPPrompt viewingGuest={viewingGuest} />
           ) : null}
           {responses ? (
-            <ResponsesView event={event} responses={responses} />
+            <ResponsesView event={event} responses={responses} weAreTheHost={weAreTheHost}/>
           ) : null}
         </main>
         <Footer />
@@ -461,6 +467,9 @@ export const getServerSideProps: GetServerSideProps = async (
       },
     };
   }
+  // Pass data to the page via props
+  const email = session?.user?.email;
+  const weAreTheHost = email ? event.host === (await getHostUserByEmail(pool, email)) : false;
 
   const responses = await eventResponses(pool, event.id);
   if (responses === null) {
@@ -479,8 +488,6 @@ export const getServerSideProps: GetServerSideProps = async (
       ? null
       : await findGuestByMagicCode(pool, userMagicCode);
 
-  // Pass data to the page via props
-  const email = session?.user?.email;
   return {
     props: {
       event,
@@ -489,8 +496,9 @@ export const getServerSideProps: GetServerSideProps = async (
       email: email ? email : null,
       countryCode,
       inEurope,
+      weAreTheHost
     },
   };
 };
 
-export default Page;
+export default EventPage;
