@@ -1,6 +1,11 @@
 {
   "name": "gatho-events",
-  "private": true,
+  "version": "1.0.0",
+  "lockfileVersion": 2,
+  "requires": true,
+  "author": "Jake Coppinger",
+  "homepage": "https://gatho.party",
+  "license": "AGPL-3.0",
   "scripts": {
     "dev": "next dev",
     "build": "npm run test && npm run typecheck && npx prisma generate && next build && cp -r node_modules/.prisma .",
