@@ -47,7 +47,7 @@ See [docs/installing-postgres.md](docs/installing-postgres.md) for installation 
 you'd like to setup a local server.
 
 ### Creating the database tables
-Run `./scripts/scripts/create-database-tables-local.sh`
+Run `./scripts/create-database-tables-local.sh`
 
 ## Running website dev server
 - npm i
