@@ -50,9 +50,9 @@ you'd like to setup a local server.
 Run `./scripts/scripts/create-database-tables-local.sh`
 
 ## Running website dev server
-- npm i
-- npm build
-- npm run dev
+- `npm i`
+- `npm build`
+- `npm run dev`
 
 # Debugging
 ## Prisma
@@ -65,20 +65,20 @@ adapter - I haven't written my own at this stage so I used Prisma. This comes wi
 I encountered this when using Heroku during development. See
 https://github.com/prisma/prisma/issues/4571#issuecomment-925249761
 
-- Change your prisma .env file to local db (mydb)
-- Delete prisma/migrations folder if any
+- Change your prisma `.env` file to local db (`mydb`)
+- Delete `prisma/migrations` folder if any
 - Run `npx prisma migrate dev --preview-feature` to start a new migration
 
-- Change your prisma .env file back to development db
-- Run npx prisma migrate resolve --applied "{{MIGRATION_FOLDER_NAME_GENERATED_BY_STEP_4}}" --preview-feature
+- Change your prisma `.env` file back to the development db
+- Run `npx prisma migrate resolve --applied "{{MIGRATION_FOLDER_NAME_GENERATED_BY_STEP_4}}" --preview-feature`
 
-- npx prisma migrate reset
+- `npx prisma migrate reset`
 
 
 ## Debugging database issues
 
 Some SQL tables use `SERIAL` keywords. If you delete a record the counter can become outdated.
-Run this snippet replacing "events" with the table you're having issues with
+Run this snippet replacing `"events"` with the table you're having issues with
 
 ```
 SELECT SETVAL((SELECT PG_GET_SERIAL_SEQUENCE('"events"', 'id')), (SELECT (MAX("id") + 1) FROM "events"), FALSE);
