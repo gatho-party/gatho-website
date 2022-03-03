@@ -11,7 +11,7 @@ import {
   EventResponse,
   GuestSQL,
 } from "../../src/common-interfaces";
-import { getSession, useSession } from "next-auth/react";
+import { getSession } from "next-auth/react";
 import Link from "next/link";
 import { statuses, statusMap } from "../../src/constants";
 import { Status } from "../../src/common-interfaces";
@@ -24,6 +24,7 @@ import {
   createDatabasePool,
   getCountryCode,
   isCountryInEurope,
+  isThisEmailHostOfThisEvent,
 } from "../../src/backend-utils";
 import { GeoProps } from "../../src/interfaces";
 import { CountryContext } from "../../src/context";
@@ -36,6 +37,7 @@ interface EventProps extends GeoProps {
   responses?: EventResponse[] | null;
   viewingGuest?: GuestSQL | null;
   email?: string | null;
+  areWeTheHost?: boolean | null;
 }
 
 /** Returns number of guests invited with the given status */
@@ -49,9 +51,11 @@ function countGuestsByStatus(
 function ResponsesView({
   event,
   responses,
+  areWeTheHost
 }: {
   event: EventSQL;
   responses: EventResponse[];
+  areWeTheHost: boolean;
 }) {
   return (
     <div>
@@ -60,7 +64,7 @@ function ResponsesView({
           <h3>
             {statusMap[status]} ({countGuestsByStatus(responses, status)})
           </h3>
-          <GuestsByStatus responses={responses} status={status} event={event} />
+          <GuestsByStatus areWeTheHost={areWeTheHost} responses={responses} status={status} event={event} />
         </div>
       ))}
     </div>
@@ -73,8 +77,9 @@ function Page({
   viewingGuest,
   countryCode,
   inEurope,
+  areWeTheHost,
+  email
 }: EventProps) {
-  const { data: session } = useSession();
   if (event === null || event === undefined) {
     return (
       <CountryContext.Provider value={{ countryCode, inEurope }}>
@@ -85,7 +90,7 @@ function Page({
           </Head>
 
           <main className={styles.main}>
-            <LoggedInDisplay authenticatedUser={session?.user?.email} />
+            <LoggedInDisplay authenticatedUser={email} />
             <Link href="/" passHref>
               <a>
                 <GathoLogo className={"smallEventLogo"} />
@@ -123,14 +128,14 @@ function Page({
         </Head>
 
         <main className={styles.main}>
-          <LoggedInDisplay authenticatedUser={session?.user?.email} />
+          <LoggedInDisplay authenticatedUser={email} />
           <Link href="/" passHref>
             <a>
               <GathoLogo className={"smallEventLogo"} />
             </a>
           </Link>
 
-          {session ? (
+          {areWeTheHost ? (
             <EditableEventHeading
               headingText={event.name}
               className={"event-name"}
@@ -142,7 +147,7 @@ function Page({
             <h2 className={"event-name editable-signed-in"}>{event.name}</h2>
           )}
 
-          {session ? (
+          {areWeTheHost ? (
             <EditableEventHeading
               headingText={event.place}
               prefix={"📍 "}
@@ -153,7 +158,7 @@ function Page({
           ) : (
             <h2 className={"editable-signed-in"}>📍 {event.place}</h2>
           )}
-          {session ? (
+          {areWeTheHost ? (
             <EditableEventHeading
               headingText={event.time}
               prefix={"🕦 "}
@@ -165,7 +170,7 @@ function Page({
             <h2>🕦 {event.time}</h2>
           )}
 
-          {session ? (
+          {areWeTheHost ? (
             <div className="event-matrix-blurb">
               <p>
                 Optional: Create a Matrix room and invite the Gatho Bot (
@@ -197,7 +202,7 @@ function Page({
             </p>
           ) : null}
 
-          {session ? (
+          {areWeTheHost ? (
             <div>
               <h2 className="event-description title">Event description:</h2>
               <EditableEventHeading
@@ -215,12 +220,12 @@ function Page({
             </h2>
           )}
 
-          {session ? <AddNewGuest event={event} /> : null}
+          {areWeTheHost ? <AddNewGuest event={event} /> : null}
           {viewingGuest !== null && viewingGuest !== undefined ? (
             <RSVPPrompt viewingGuest={viewingGuest} />
           ) : null}
           {responses ? (
-            <ResponsesView event={event} responses={responses} />
+            <ResponsesView areWeTheHost={areWeTheHost === true} event={event} responses={responses} />
           ) : null}
         </main>
         <Footer />
@@ -288,12 +293,15 @@ export const getServerSideProps: GetServerSideProps = async (
 
   // Pass data to the page via props
   const email = session?.user?.email;
+
+  const areWeTheHost = email ? await isThisEmailHostOfThisEvent(pool, event.id, email) : false;
   return {
     props: {
       event,
       responses,
       viewingGuest,
       email: email ? email : null,
+      areWeTheHost,
       countryCode,
       inEurope,
     },

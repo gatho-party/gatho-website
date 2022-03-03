@@ -1,5 +1,6 @@
-// export const gathoApiUrl = "http://localhost:3000";
-export const gathoApiUrl = "https://gatho.party";
+export const gathoApiUrl = process.env.NODE_ENV === 'production'
+  ? "https://gatho.party"
+  : "http://localhost:3000";
 
 export type Status = 'going' | 'maybe' | 'notgoing' | 'invited';
 
@@ -16,7 +17,6 @@ export interface EventSQL {
   place: string;
   matrix_room_address: string;
   matrix_rsvp_message: string;
-
 }
 
 export interface EventGuestSQL {

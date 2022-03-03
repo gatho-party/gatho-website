@@ -5,7 +5,6 @@ import {
   gathoApiUrl,
   Status,
 } from "../src/common-interfaces";
-import { useSession } from "next-auth/react";
 import { parseMatrixUsernamePretty, prettifiedDisplayName } from "../src/fullstack-utils";
 import { copyToClipboard } from "../src/frontend-utils";
 /** Generate 4 lists of the attendees, splt by response status */
@@ -13,12 +12,13 @@ export function GuestsByStatus({
   responses,
   status,
   event,
+  areWeTheHost,
 }: {
   responses: EventResponse[];
   status: Status;
   event: EventSQL;
+  areWeTheHost: boolean
 }) {
-  const { data: session } = useSession();
   return (
     <ul className={`guestsByStatus ${status}`}>
       {responses
@@ -39,7 +39,7 @@ export function GuestsByStatus({
             <li key={r.guest_id}>
               <span className="name">{name}</span>
 
-              {session ? (
+              {areWeTheHost ? (
                 <button
                   className={"copy-invite-button"}
                   onClick={() => copyToClipboard(inviteURL)}

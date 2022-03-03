@@ -2,7 +2,7 @@ import type { NextApiRequest, NextApiResponse } from 'next'
 import { CreateGuestPayload } from '../../src/common-interfaces';
 import { createNewEventGuest, createNewGuest, getEventsByHostEmail } from '../../src/db';
 import { getSession } from 'next-auth/react';
-import { createDatabasePool, isNotPost, validateSessionAndGetEmail } from '../../src/backend-utils';
+import { createDatabasePool, isNotPost, isThisEmailHostOfThisEvent, validateSessionAndGetEmail } from '../../src/backend-utils';
 
 export default async function handler(
   req: NextApiRequest,
@@ -30,8 +30,7 @@ export default async function handler(
     return;
   }
 
-  const events = await getEventsByHostEmail(pool,email);
-  if(events === null || events.find(event => event.id === eventId) === undefined) {
+  if(await isThisEmailHostOfThisEvent(pool, eventId, email) !== true) {
     res.status(500).json({ result: 'You are not the owner of the given event' })
     return;
   }

@@ -4,11 +4,7 @@ import { Status } from './common-interfaces';
 import crypto from 'crypto';
 import { parseMatrixUsernamePretty } from "./fullstack-utils";
 
-// const connectionString = process.env.DATABASE_URL;
-// if (connectionString === undefined) {
-//   throw Error("DATABASE_URL is undefined");
-// }
-
+/** Create a database pool connection */
 export function newPool(connectionString: string) {
   return new Pool({
     connectionString,
@@ -115,7 +111,6 @@ export async function getHostUserByEmail(
   return parseInt(possibleId.id);
 }
 
-
 export async function findGuestByMagicCode(
   client: Pool,
   magicCode: string
@@ -146,7 +141,6 @@ export async function findGuestByMatrixUsername(
   }
   return possibleGuest;
 }
-
 
 /**
  * Set the status of a guest

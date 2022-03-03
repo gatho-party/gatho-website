@@ -2,7 +2,7 @@ import { IncomingMessage } from "http";
 import { NextApiRequest, NextApiResponse } from "next";
 import { Session } from "next-auth";
 import { Pool } from "pg";
-import { getEventByRoomId, newPool } from "./db";
+import { getEventByRoomId, getEventsByHostEmail, newPool } from "./db";
 import { secret_matrix_bot_key } from './constants';
 import { parse } from 'accept-language-parser';
 import { EventSQL } from "./common-interfaces";
@@ -199,7 +199,7 @@ export async function getPoolWithMatrixRoomId(roomId: string): Promise<{ pool: P
   let euPool: Pool | undefined;
   if (maybeExistingEventInAU === null) {
     console.log(`Didn't find it. Trying to find room ${roomId} in EU...`);
-    console.log({euDatabaseUrl});
+    console.log({ euDatabaseUrl });
     auPool.end();
     euPool = newPool(euDatabaseUrl);
     let maybeExistingEventInEU = await getEventByRoomId(euPool, roomId);
@@ -215,4 +215,17 @@ export async function getPoolWithMatrixRoomId(roomId: string): Promise<{ pool: P
   }
   console.log(`Found room ${roomId} in AU`);
   return { pool: auPool, event: maybeExistingEventInAU };
+}
+
+/** Check if user with the given email is the host of the event with the given event ID.
+ * Returns null is no events found for host. Otherwise returns boolean */
+export async function isThisEmailHostOfThisEvent(pool: Pool, eventId: number, email: string):
+  Promise<boolean | null> {
+  const events = await getEventsByHostEmail(pool, email);
+  if (events === null) {
+    return null;
+  }
+  // If there isn't an event where the host ID is the same as the user, they don't own the given
+  // event
+  return events.find(event => event.id === eventId) !== undefined;
 }
