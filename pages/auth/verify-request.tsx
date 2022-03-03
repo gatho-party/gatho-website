@@ -25,7 +25,9 @@ function Home({}: GettingStartedProps) {
         {/* eslint-enable */}
           <h1>Check your email!</h1>
           <h2>You&apos;ll receive your sign in link from noreply@mail.gatho.party.</h2>
-          <p>If you don&apos;t receive the email check your spam folder</p>
+          <p>If you don&apos;t receive the email check your spam folder. The sign in link expires
+            in one day.
+          </p>
 
         <Footer />
       </div>
