@@ -22,7 +22,15 @@ export function Footer() {
           in Sydney, Australia.
         </h5>
         <p>
-          Get involved! Join the community on Matrix and ask questions at{" "}
+          Get involved! Gatho is open-source (AGPL-3.0) on{" "}
+          <a
+            target="_blank"
+            rel="noopener noreferrer"
+            href="https://github.com/gatho-party/gatho-website"
+          >
+            Github
+          </a>
+          . Join the community on Matrix and ask questions at{" "}
           <a href="https://matrix.to/#/#gatho-events:matrix.org">
             #gatho-events:matrix.org
           </a>
@@ -37,19 +45,19 @@ export function Footer() {
           {"   -  "}
           <Link href="/cookies">Cookies</Link>
           {"   -  "}
-        <CountryContext.Consumer>
-          {({ countryCode, inEurope }: CountryContextType) => {
-            if (countryCode === undefined) {
-              return null;
-            }
-            const datacentre = inEurope ? "European" : "Australian";
-            return (
-              <span>
-                Using {datacentre} datacentre (your region is {countryCode}).
-              </span>
-            );
-          }}
-        </CountryContext.Consumer>
+          <CountryContext.Consumer>
+            {({ countryCode, inEurope }: CountryContextType) => {
+              if (countryCode === undefined) {
+                return null;
+              }
+              const datacentre = inEurope ? "European" : "Australian";
+              return (
+                <span>
+                  Using {datacentre} datacentre (your region is {countryCode}).
+                </span>
+              );
+            }}
+          </CountryContext.Consumer>
         </p>
       </div>
     </footer>

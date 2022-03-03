@@ -4,6 +4,7 @@ import {
   eventResponses,
   findGuestByMagicCode,
   getEventByCode,
+  getHostUserByEmail,
 } from "../../src/db";
 import Head from "next/head";
 import {
@@ -55,7 +56,7 @@ function ResponsesView({
 }: {
   event: EventSQL;
   responses: EventResponse[];
-  areWeTheHost: boolean;
+  areWeTheHost: boolean
 }) {
   return (
     <div>
@@ -273,6 +274,9 @@ export const getServerSideProps: GetServerSideProps = async (
       },
     };
   }
+  // Pass data to the page via props
+  const email = session?.user?.email;
+  const weAreTheHost = email ? event.host === (await getHostUserByEmail(pool, email)) : false;
 
   const responses = await eventResponses(pool, event.id);
   if (responses === null) {
@@ -291,19 +295,15 @@ export const getServerSideProps: GetServerSideProps = async (
       ? null
       : await findGuestByMagicCode(pool, userMagicCode);
 
-  // Pass data to the page via props
-  const email = session?.user?.email;
-
-  const weAreTheHost = email ? await isThisEmailHostOfThisEvent(pool, event.id, email) : false;
   return {
     props: {
       event,
       responses,
       viewingGuest,
       email: email ? email : null,
-      weAreTheHost,
       countryCode,
       inEurope,
+      weAreTheHost
     },
   };
 };
