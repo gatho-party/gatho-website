@@ -213,7 +213,25 @@ export async function findEventGuest(client: Pool, { guestId, eventId }:
   return possibleGuest as EventGuestSQL;
 }
 
-
+/** Remove guest from event in the database. Returns true if operation succeeds */  
+export async function removeGuestFromEvent(
+  client: Pool,
+  { eventId, guestId}: {
+    eventId: number,
+    guestId: number,
+  }
+): Promise<boolean> {
+  try {
+    await client.query(
+      "delete from event_guests where event = $1 and guest = $2;",
+      [eventId, guestId]
+    );
+    return true;
+  } catch (e) {
+    console.error(`Error removing guest ${guestId} from event ${eventId}`);
+    return false;
+  }
+}
 export async function createNewGuest(
   client: Pool,
   { displayname, matrix_username}: {

@@ -217,10 +217,15 @@ export async function getPoolWithMatrixRoomId(roomId: string): Promise<{ pool: P
   return { pool: auPool, event: maybeExistingEventInAU };
 }
 
-/** Check if user with the given email is the host of the event with the given event ID.
- * Returns null is no events found for host. Otherwise returns boolean */
+/**
+ * Check if user with the given email is the host of the event with the given event ID.
+ * Returns null is no events found for host or an error occurs. Otherwise returns boolean
+ */
 export async function isThisEmailHostOfThisEvent(pool: Pool, eventId: number, email: string):
   Promise<boolean | null> {
+  if (email === undefined) {
+    return null;
+  }
   const events = await getEventsByHostEmail(pool, email);
   if (events === null) {
     return null;

@@ -1,12 +1,39 @@
-
 import {
   EventSQL,
   EventResponse,
   gathoApiUrl,
   Status,
+  RemoveGuestPayload,
 } from "../src/common-interfaces";
-import { parseMatrixUsernamePretty, prettifiedDisplayName } from "../src/fullstack-utils";
-import { copyToClipboard } from "../src/frontend-utils";
+import {
+  parseMatrixUsernamePretty,
+  prettifiedDisplayName,
+} from "../src/fullstack-utils";
+import { copyToClipboard, getBySelector } from "../src/frontend-utils";
+import { useRouter } from "next/router";
+
+async function removeGuest({
+  eventId,
+  guestId,
+}: {
+  eventId: number;
+  guestId: number;
+}): Promise<boolean> {
+  const data: RemoveGuestPayload = {
+    eventId,
+    guestId,
+  };
+  try {
+    await fetch("/api/remove-guest-from-event", {
+      body: JSON.stringify(data),
+      method: "POST",
+    });
+    return true;
+  } catch (e) {
+    return false;
+  }
+}
+
 /** Generate 4 lists of the attendees, splt by response status */
 export function GuestsByStatus({
   responses,
@@ -17,8 +44,12 @@ export function GuestsByStatus({
   responses: EventResponse[];
   status: Status;
   event: EventSQL;
-  areWeTheHost: boolean
+  areWeTheHost: boolean;
 }) {
+  const router = useRouter();
+  const refreshData = () => {
+    router.replace(router.asPath);
+  };
   return (
     <ul className={`guestsByStatus ${status}`}>
       {responses
@@ -40,12 +71,28 @@ export function GuestsByStatus({
               <span className="name">{name}</span>
 
               {areWeTheHost ? (
-                <button
-                  className={"copy-invite-button"}
-                  onClick={() => copyToClipboard(inviteURL)}
-                >
-                  Copy invite link
-                </button>
+                <span>
+                  <button
+                    className={"copy-invite-button"}
+                    onClick={() => copyToClipboard(inviteURL)}
+                  >
+                    Copy invite link
+                  </button>
+                  <button
+                    id={"remove-guest-button"}
+                    onClick={async () => {
+                      getBySelector("#remove-guest-button").innerText =
+                        "Removing...";
+                      await removeGuest({
+                        guestId: r.guest_id,
+                        eventId: event.id,
+                      });
+                      refreshData();
+                    }}
+                  >
+                    Remove guest
+                  </button>
+                </span>
               ) : null}
 
               {showMatrixLink ? (

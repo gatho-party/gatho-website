@@ -61,6 +61,11 @@ export interface RSVPViaMatrixPayload extends ViaMatrixPayload {
   displayname?: string;
 }
 
+export interface RemoveGuestPayload {
+  guestId: number;
+  eventId: number;
+}
+
 export interface CreateGuestPayload {
   eventId: number
   displayname?: string,

@@ -24,8 +24,7 @@ import { DefaultHead } from "../../components/default-head";
 import {
   createDatabasePool,
   getCountryCode,
-  isCountryInEurope,
-  isThisEmailHostOfThisEvent,
+  isCountryInEurope
 } from "../../src/backend-utils";
 import { GeoProps } from "../../src/interfaces";
 import { CountryContext } from "../../src/context";

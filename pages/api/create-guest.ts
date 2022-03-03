@@ -1,6 +1,6 @@
 import type { NextApiRequest, NextApiResponse } from 'next'
 import { CreateGuestPayload } from '../../src/common-interfaces';
-import { createNewEventGuest, createNewGuest, getEventsByHostEmail } from '../../src/db';
+import { createNewEventGuest, createNewGuest } from '../../src/db';
 import { getSession } from 'next-auth/react';
 import { createDatabasePool, isNotPost, isThisEmailHostOfThisEvent, validateSessionAndGetEmail } from '../../src/backend-utils';
 
