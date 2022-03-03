@@ -44,20 +44,15 @@ export function UnauthenticatedIndex({ csrfToken }: UnauthenticatedIndexProps) {
             <h3>Simple sign up to host, RSVP without an account</h3>
             <p>
               Add each of your guests to the guestlist and send them their
-              personalised invitation link via their preferred social app they
-              prefer (eg. Instagram / Signal / WhatsApp / Element).
+              personalised invitation link via their preferred social app
+              (eg. Instagram / Signal / SMS / Element / WhatsApp).
             </p>
             <p>
-              When they follow their link they will be able to update their RSVP
-              status - without signing up. Though of course - they might sign up
+              When they follow their link they can click a button to confirm their attendence
+              (RSVP) - without signing up. Though of course - they might sign up
               to host their next event on Gatho!
             </p>
           </div>
-
-          {/* <img
-            src="https://via.placeholder.com/700x1080.png"
-            alt="Screenshot of inviting friend over SMS, maybe multiple screenshots of different streams"
-          ></img> */}
 
           <div className="introContainer">
             <div className="left">
