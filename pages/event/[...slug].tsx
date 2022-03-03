@@ -10,23 +10,11 @@ import {
   EventSQL,
   EventResponse,
   GuestSQL,
-  RSVPPayload,
-  CreateGuestPayload,
 } from "../../src/common-interfaces";
-import { useRouter } from "next/router";
 import { getSession, useSession } from "next-auth/react";
 import Link from "next/link";
 import { statuses, statusMap } from "../../src/constants";
-import {
-  copyToClipboard,
-  getBySelector,
-  getInputValue,
-} from "../../src/frontend-utils";
-import {
-  parseMatrixUsernamePretty,
-  prettifiedDisplayName,
-} from "../../src/fullstack-utils";
-import { gathoApiUrl, Status } from "../../src/common-interfaces";
+import { Status } from "../../src/common-interfaces";
 import { EditableEventHeading } from "../../components/editable-event-heading";
 import { GathoLogo } from "../../components/gatho-logo";
 import { LoggedInDisplay } from "../../components/logged-in-display";
@@ -39,35 +27,9 @@ import {
 } from "../../src/backend-utils";
 import { GeoProps } from "../../src/interfaces";
 import { CountryContext } from "../../src/context";
-
-async function addGuest({
-  displayname,
-  matrix_username,
-  eventId,
-}: {
-  displayname?: string;
-  matrix_username?: string;
-  eventId: number;
-}): Promise<boolean> {
-  if (displayname === undefined && matrix_username === undefined) {
-    console.error("Both displayname and matrix_username is undefined!");
-    return false;
-  }
-  const data: CreateGuestPayload = {
-    displayname,
-    matrix_username,
-    eventId,
-  };
-  try {
-    await fetch("/api/create-guest", {
-      body: JSON.stringify(data),
-      method: "POST",
-    });
-    return true;
-  } catch (e) {
-    return false;
-  }
-}
+import { GuestsByStatus } from "../../components/guests-by-status";
+import { RSVPPrompt } from "../../components/rsvp-prompt";
+import { AddNewGuest } from "../../components/add-new-guest";
 
 interface EventProps extends GeoProps {
   event?: EventSQL | null;
@@ -75,122 +37,8 @@ interface EventProps extends GeoProps {
   viewingGuest?: GuestSQL | null;
   email?: string | null;
 }
-async function rsvp(status: Status, magic_code: string) {
-  const data: RSVPPayload = {
-    guest_magic_code: magic_code,
-    status,
-  };
-  const result = await fetch("/api/rsvp", {
-    body: JSON.stringify(data),
-    method: "POST",
-  });
-  return result;
-}
 
-function RSVPPrompt({ viewingGuest }: { viewingGuest: GuestSQL }) {
-  const router = useRouter();
-  const refreshData = () => {
-    router.replace(router.asPath);
-  };
-  return (
-    <div className="rsvp-prompt-component">
-      <h3>
-        {viewingGuest.displayname
-          ? prettifiedDisplayName(viewingGuest.displayname)
-          : parseMatrixUsernamePretty(viewingGuest.matrix_username as string)}
-        , can you make it?
-      </h3>
-      <button
-        onClick={async () => {
-          await rsvp("going", viewingGuest.magic_code);
-          refreshData();
-        }}
-      >
-        Going
-      </button>
-      <button
-        onClick={async () => {
-          await rsvp("maybe", viewingGuest.magic_code);
-          refreshData();
-        }}
-      >
-        Maybe
-      </button>
-      <button
-        onClick={async () => {
-          await rsvp("notgoing", viewingGuest.magic_code);
-          refreshData();
-        }}
-      >
-        Cant go
-      </button>
-    </div>
-  );
-}
-/** Generate 4 lists of the attendees, splt by response status */
-function GuestsByStatus({
-  responses,
-  status,
-  event,
-}: {
-  responses: EventResponse[];
-  status: Status;
-  event: EventSQL;
-}) {
-  const { data: session } = useSession();
-  return (
-    <ul className={`guestsByStatus ${status}`}>
-      {responses
-        .filter((response) => response.status === status)
-        .map((r) => {
-          const inviteURL = `${gathoApiUrl}/event/${event.code}/${r.magic_code}`;
-          const viaSignal: boolean = r.matrix_username
-            ? r.matrix_username.includes("signal")
-            : false;
-          const showMatrixLink: boolean =
-            viaSignal === false && r.matrix_username !== null;
-
-          const name = r.displayname
-            ? prettifiedDisplayName(r.displayname)
-            : parseMatrixUsernamePretty(r.matrix_username as string);
-
-          const li = (
-            <li key={r.guest_id}>
-              <span className="name">{name}</span>
-
-              {session ? (
-                <button
-                  className={"copy-invite-button"}
-                  onClick={() => copyToClipboard(inviteURL)}
-                >
-                  Copy invite link
-                </button>
-              ) : null}
-
-              {showMatrixLink ? (
-                <p className={"dm-via-matrix"}>
-                  DM on Matrix:{" "}
-                  <a
-                    target="_blank"
-                    rel="noreferrer"
-                    href={`https://matrix.to/#/${r.matrix_username}`}
-                  >
-                    {r.matrix_username}
-                  </a>
-                </p>
-              ) : null}
-
-              {viaSignal ? (
-                <p style={{ fontSize: "20px" }}>Via Signal to Matrix bridge</p>
-              ) : null}
-            </li>
-          );
-          return li;
-        })}
-    </ul>
-  );
-}
-
+/** Returns number of guests invited with the given status */
 function countGuestsByStatus(
   responses: EventResponse[],
   status: Status
@@ -216,47 +64,6 @@ function ResponsesView({
         </div>
       ))}
     </div>
-  );
-}
-
-function AddNewGuest({ event }: { event: EventSQL }) {
-  const router = useRouter();
-  const refreshData = () => {
-    router.replace(router.asPath);
-  };
-  return (
-    <>
-      <h3>Add a new guest (only visible to you)</h3>
-      <input id="addGuestInput" placeholder="Guest name"></input>
-      <button
-        id="addGuestButton"
-        onClick={async () => {
-          const displayname = getInputValue("#addGuestInput");
-          getBySelector("#addGuestButton").innerText = "Adding guest...";
-          const successfullyAdded = await addGuest({
-            displayname,
-            matrix_username: undefined,
-            eventId: event.id,
-          });
-          getBySelector("#addGuestButton").innerText = "Add guest";
-          getBySelector("#addGuestInput").value = "";
-
-          if (successfullyAdded) {
-            alert(
-              "Guest added! Now copy their invite link and send it to them."
-            );
-          } else {
-            alert(
-              "Failed to add guest - see links in footer for support. Sorry!"
-            );
-          }
-
-          refreshData();
-        }}
-      >
-        Add guest
-      </button>
-    </>
   );
 }
 
