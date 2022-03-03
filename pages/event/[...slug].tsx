@@ -37,7 +37,7 @@ interface EventProps extends GeoProps {
   responses?: EventResponse[] | null;
   viewingGuest?: GuestSQL | null;
   email?: string | null;
-  areWeTheHost?: boolean | null;
+  weAreTheHost?: boolean | null;
 }
 
 /** Returns number of guests invited with the given status */
@@ -77,7 +77,7 @@ function Page({
   viewingGuest,
   countryCode,
   inEurope,
-  areWeTheHost,
+  weAreTheHost,
   email
 }: EventProps) {
   if (event === null || event === undefined) {
@@ -135,7 +135,7 @@ function Page({
             </a>
           </Link>
 
-          {areWeTheHost ? (
+          {weAreTheHost ? (
             <EditableEventHeading
               headingText={event.name}
               className={"event-name"}
@@ -147,7 +147,7 @@ function Page({
             <h2 className={"event-name editable-signed-in"}>{event.name}</h2>
           )}
 
-          {areWeTheHost ? (
+          {weAreTheHost ? (
             <EditableEventHeading
               headingText={event.place}
               prefix={"📍 "}
@@ -158,7 +158,7 @@ function Page({
           ) : (
             <h2 className={"editable-signed-in"}>📍 {event.place}</h2>
           )}
-          {areWeTheHost ? (
+          {weAreTheHost ? (
             <EditableEventHeading
               headingText={event.time}
               prefix={"🕦 "}
@@ -170,7 +170,7 @@ function Page({
             <h2>🕦 {event.time}</h2>
           )}
 
-          {areWeTheHost ? (
+          {weAreTheHost ? (
             <div className="event-matrix-blurb">
               <p>
                 Optional: Create a Matrix room and invite the Gatho Bot (
@@ -202,7 +202,7 @@ function Page({
             </p>
           ) : null}
 
-          {areWeTheHost ? (
+          {weAreTheHost ? (
             <div>
               <h2 className="event-description title">Event description:</h2>
               <EditableEventHeading
@@ -220,12 +220,12 @@ function Page({
             </h2>
           )}
 
-          {areWeTheHost ? <AddNewGuest event={event} /> : null}
+          {weAreTheHost ? <AddNewGuest event={event} /> : null}
           {viewingGuest !== null && viewingGuest !== undefined ? (
             <RSVPPrompt viewingGuest={viewingGuest} />
           ) : null}
           {responses ? (
-            <ResponsesView areWeTheHost={areWeTheHost === true} event={event} responses={responses} />
+            <ResponsesView areWeTheHost={weAreTheHost === true} event={event} responses={responses} />
           ) : null}
         </main>
         <Footer />
@@ -294,14 +294,14 @@ export const getServerSideProps: GetServerSideProps = async (
   // Pass data to the page via props
   const email = session?.user?.email;
 
-  const areWeTheHost = email ? await isThisEmailHostOfThisEvent(pool, event.id, email) : false;
+  const weAreTheHost = email ? await isThisEmailHostOfThisEvent(pool, event.id, email) : false;
   return {
     props: {
       event,
       responses,
       viewingGuest,
       email: email ? email : null,
-      areWeTheHost,
+      weAreTheHost,
       countryCode,
       inEurope,
     },
