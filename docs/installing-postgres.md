@@ -1,7 +1,7 @@
 Installing Postgres
 ===================
 
-Gatho uses Postgres. It gets the database location via the database URLs in the .env file
+Gatho uses Postgres. It gets the database location via the database URLs in the `.env` file
 
 PRs very welcome to improve these instructions!
 
@@ -10,14 +10,16 @@ PRs very welcome to improve these instructions!
 brew install postgresql
 ```
 
-To have launchd start postgresql now and restart at login:
+To have `launchd` start `postgresql` now and restart at login:
 
 ```
 brew services start postgresql
 ```
 
 Or, if you don't want/need a background service you can just run:              
-  /opt/homebrew/opt/postgresql/bin/postgres -D /opt/homebrew/var/postgres
+`
+/opt/homebrew/opt/postgresql/bin/postgres -D /opt/homebrew/var/postgres
+`
 
 # Postgres Linux installation
 
@@ -32,7 +34,7 @@ ls /etc/postgresql
 `
 
 Then insert version into the below statement.
-Update the pg_hba.conf file to give your local account permissions
+Update the `pg_hba.conf file` to give your local account permissions
 `
 sudo vim /etc/postgresql/[version]/main/pg_hba.conf`
 
