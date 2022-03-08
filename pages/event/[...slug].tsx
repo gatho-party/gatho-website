@@ -172,18 +172,8 @@ function Page({
           {weAreTheHost ? (
             <div className="event-matrix-blurb">
               <p>
-                Optional: Create a Matrix room and invite the Gatho Bot (
-                <a
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  href="https://matrix.to/#/@bot:matrix.gatho.party"
-                >
-                  @bot:matrix.gatho.party
-                </a>
-                ) - if a friend reacts to your invite message with a thumbs up
-                emoji, they&apos;ll be marked as &quot;going&quot; on Gatho! See
-                the <Link href="/getting-started">getting started guide</Link>{" "}
-                for more info.
+                Optional: Link with your Matrix group chat - see the
+                the <Link href="/getting-started">getting started guide</Link>.
               </p>
             </div>
           ) : event.matrix_room_address.length !== 0 ? (
