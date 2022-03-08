@@ -27,7 +27,7 @@ import { CountryContext } from "../../src/context";
 import { GuestsByStatus } from "../../components/guests-by-status";
 import { RSVPPrompt } from "../../components/rsvp-prompt";
 import { AddNewGuest } from "../../components/add-new-guest";
-import Router, { useRouter } from "next/router";
+import { useRouter } from "next/router";
 
 interface EventProps extends GeoProps {
   event?: EventSQL | null;

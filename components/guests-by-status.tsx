@@ -1,6 +1,5 @@
 import {
   EventSQL,
-  gathoApiUrl,
   Status,
   RemoveGuestPayload,
   GuestSQL,
