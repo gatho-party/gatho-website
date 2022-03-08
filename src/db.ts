@@ -151,7 +151,7 @@ export async function setStatusViaGuestAndEvent(
 ): Promise<boolean> {
   try {
     await client.query(
-      "UPDATE guests SET status = $1 WHERE guest = $2 and event = $3;",
+      "UPDATE guests SET status = $1 WHERE id = $2 and event = $3;",
       [status, guestId, eventId]
     );
     return true;
@@ -192,12 +192,12 @@ export async function removeGuestFromEvent(
 ): Promise<boolean> {
   try {
     await client.query(
-      "delete from guests where event = $1 and guest = $2;",
+      "delete from guests where event = $1 and id = $2;",
       [eventId, guestId]
     );
     return true;
   } catch (e) {
-    console.error(`Error removing guest ${guestId} from event ${eventId}`);
+    console.error(`Error removing guest ${guestId} from event ${eventId}: ${e}`);
     return false;
   }
 }
