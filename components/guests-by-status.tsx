@@ -1,9 +1,9 @@
 import {
   EventSQL,
-  EventResponse,
   gathoApiUrl,
   Status,
   RemoveGuestPayload,
+  GuestSQL,
 } from "../src/common-interfaces";
 import {
   parseMatrixUsernamePretty,
@@ -36,12 +36,12 @@ async function removeGuest({
 
 /** Generate 4 lists of the attendees, splt by response status */
 export function GuestsByStatus({
-  responses,
+  guests,
   status,
   event,
   areWeTheHost,
 }: {
-  responses: EventResponse[];
+  guests: GuestSQL[];
   status: Status;
   event: EventSQL;
   areWeTheHost: boolean;
@@ -52,7 +52,7 @@ export function GuestsByStatus({
   };
   return (
     <ul className={`guestsByStatus ${status}`}>
-      {responses
+      {guests
         .filter((response) => response.status === status)
         .map((r) => {
           const inviteURL = `${gathoApiUrl}/event/${event.code}/${r.magic_code}`;
@@ -67,7 +67,7 @@ export function GuestsByStatus({
             : parseMatrixUsernamePretty(r.matrix_username as string);
 
           const li = (
-            <li key={r.guest_id}>
+            <li key={r.id}>
               <span className="name">{name}</span>
 
               {areWeTheHost ? (
@@ -84,7 +84,7 @@ export function GuestsByStatus({
                       getBySelector("#remove-guest-button").innerText =
                         "Removing...";
                       await removeGuest({
-                        guestId: r.guest_id,
+                        guestId: r.id,
                         eventId: event.id,
                       });
                       refreshData();

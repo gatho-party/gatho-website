@@ -1,5 +1,5 @@
 import { Pool } from "pg";
-import { EventSQL, EventResponse, GuestSQL, EventDetails, EventGuestSQL } from "./common-interfaces";
+import { EventSQL, GuestSQL, EventDetails } from "./common-interfaces";
 import { Status } from './common-interfaces';
 import crypto from 'crypto';
 import { parseMatrixUsernamePretty } from "./fullstack-utils";
@@ -57,17 +57,13 @@ export async function getEventsByHostEmail(
   return possibleEvents;
 }
 
-export async function eventResponses(
+export async function getGuestsByEvent(
   pool: Pool,
   eventId: number
-): Promise<EventResponse[] | null> {
+): Promise<GuestSQL[] | null> {
   const res = await pool.query(
     `
-    select
-      g.id as guest_id, g.magic_code as magic_code, a.status, g.displayname, g.matrix_username, g.phone_number
-    from event_guests a JOIN guests g ON a.guest = g.id
-    where a.event = $1 
-    ;`,
+    select * from guests g where g.event = $1;`,
     [eventId]
   );
   const possibleResponses = res.rows;
@@ -155,7 +151,7 @@ export async function setStatusViaGuestAndEvent(
 ): Promise<boolean> {
   try {
     await client.query(
-      "UPDATE event_guests SET status = $1 WHERE guest = $2 and event = $3;",
+      "UPDATE guests SET status = $1 WHERE guest = $2 and event = $3;",
       [status, guestId, eventId]
     );
     return true;
@@ -178,52 +174,25 @@ export async function setStatusViaMagicCode(
   }
 
   await client.query(
-    "UPDATE event_guests SET status = $1 WHERE guest = $2;",
+    "UPDATE guests SET status = $1 WHERE id = $2;",
     [status, guest.id]
   );
 
   return true;
 }
 
-export async function createNewEventGuest(client: Pool, { guestId, eventId }: { guestId: number, eventId: number }) {
-  // Insert guest into event attendees
-  const status: Status = 'invited';
-  try {
-    await client.query(
-      "insert into event_guests(event,guest,status) values ($1,$2, $3);",
-      [eventId, guestId, status]
-    );
-  } catch (e) {
-    console.error(`Failed to create event_guest for event: ${eventId}, guestId: ${guestId}, status: ${status}: ${e}s`);
-  }
-}
 
-export async function findEventGuest(client: Pool, { guestId, eventId }:
-  { guestId: number, eventId: number }):
-  Promise<EventGuestSQL | null> {
-  const res = await client.query(
-    "select * from event_guests where event = $1 and guest = $2;",
-    [eventId, guestId]
-  );
-
-  const possibleGuest = res.rows[0];
-  if (possibleGuest === undefined) {
-    return null;
-  }
-  return possibleGuest as EventGuestSQL;
-}
-
-/** Remove guest from event in the database. Returns true if operation succeeds */  
+/** Remove guest from event in the database. Returns true if operation succeeds */
 export async function removeGuestFromEvent(
   client: Pool,
-  { eventId, guestId}: {
+  { eventId, guestId }: {
     eventId: number,
     guestId: number,
   }
 ): Promise<boolean> {
   try {
     await client.query(
-      "delete from event_guests where event = $1 and guest = $2;",
+      "delete from guests where event = $1 and guest = $2;",
       [eventId, guestId]
     );
     return true;
@@ -232,11 +201,19 @@ export async function removeGuestFromEvent(
     return false;
   }
 }
+
+/**
+ * Creates a new guest. Handles creating the unique code and setting initial status.
+ * @param client SQL client
+ * @param param1 Fields
+ * @returns Guest ID if success, null if failure
+ */
 export async function createNewGuest(
   client: Pool,
-  { displayname, matrix_username}: {
+  { event, displayname, matrix_username }: {
+    event: number,
     displayname?: string,
-    matrix_username?: string,
+    matrix_username?: string ,
   }
 ): Promise<number | null> {
 
@@ -247,12 +224,12 @@ export async function createNewGuest(
   const regex = /[^A-Za-z0-9]/g;
   const plainAlphaName = urlName.replace(regex, "-");
   const magicCode = `${encodeURIComponent(plainAlphaName)}-${crypto.randomBytes(10).toString('hex')}`;
-  const phoneNumber = ''
 
+  const status: Status = 'invited';
   try {
     await client.query(
-      "insert into guests(displayname, matrix_username, magic_code, phone_number) values ($1,$2, $3, $4);",
-      [displayname, matrix_username, magicCode, phoneNumber]
+      "insert into guests(event, displayname, matrix_username, magic_code, status) values ($1,$2, $3, $4,$5);",
+      [event, displayname, matrix_username, magicCode, status]
     );
 
     // get the primary key for the new guest
@@ -260,7 +237,6 @@ export async function createNewGuest(
       "select g.id from guests g where magic_code = $1", [magicCode]
     );
     const guestId = res.rows[0].id;
-
     return guestId;
   } catch (e) {
     console.error(`Error creating guest displayname: ${displayname}, matrix: ${matrix_username}: ${e}`);

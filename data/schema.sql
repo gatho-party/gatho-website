@@ -7,10 +7,12 @@ CREATE TABLE users (
 
 CREATE TABLE guests (
 	id SERIAL PRIMARY KEY,
+	event INT NOT NULL,
 	displayname TEXT,
 	matrix_username TEXT,
-	magic_code TEXT, -- The code required to "auth" as the user
-	phone_number TEXT
+	magic_code TEXT NOT NULL, -- The code required to "auth" as the user
+	status TEXT NOT NULL,
+	FOREIGN KEY (event) REFERENCES events(id)
 );
 
 CREATE TABLE events (
@@ -29,18 +31,6 @@ CREATE TABLE events (
 	FOREIGN KEY (host) REFERENCES users(id)
 );
 
-CREATE TABLE event_guests (
-	event INT NOT NULL,
-	guest INT NOT NULL,
-	-- role TEXT NOT NULL,
-	status TEXT NOT NULL,
-	PRIMARY KEY (
-		event,
-		guest
-	),
-	FOREIGN KEY (guest) REFERENCES guests(id),
-	FOREIGN KEY (event) REFERENCES events(id)
-);
 
 --- Created by Postico, from the generated Prisma schema
 

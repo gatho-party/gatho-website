@@ -1,6 +1,6 @@
 import type { NextApiRequest, NextApiResponse } from 'next'
 import { RSVPViaMatrixPayload } from '../../src/common-interfaces';
-import { createNewGuest, findGuestByMatrixUsername, findEventGuest, createNewEventGuest, setStatusViaGuestAndEvent } from '../../src/db';
+import { createNewGuest, findGuestByMatrixUsername, setStatusViaGuestAndEvent } from '../../src/db';
 import { getPoolWithMatrixRoomId, isMatrixBotKeyIncorrect, isNotPost } from '../../src/backend-utils';
 
 export default async function handler(
@@ -38,16 +38,11 @@ export default async function handler(
   }
 
   if (guestId === null) {
-    guestId = await createNewGuest(pool, { matrix_username, displayname });
+    guestId = await createNewGuest(pool, { event: eventId, matrix_username, displayname });
   }
   if (guestId === null) {
     res.status(500).json({ result: `failed to update DB - unable to create new guest` })
     return;
-  }
-
-  let eventGuest = await findEventGuest(pool, { guestId, eventId });
-  if (eventGuest === null) {
-    createNewEventGuest(pool, { guestId, eventId });
   }
 
   const result = await setStatusViaGuestAndEvent(pool, { guestId, eventId, status });

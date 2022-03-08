@@ -1,15 +1,14 @@
 import { GetServerSideProps, GetServerSidePropsResult } from "next";
 import styles from "../../styles/Home.module.css";
 import {
-  eventResponses,
   findGuestByMagicCode,
   getEventByCode,
+  getGuestsByEvent,
   getHostUserByEmail,
 } from "../../src/db";
 import Head from "next/head";
 import {
   EventSQL,
-  EventResponse,
   GuestSQL,
 } from "../../src/common-interfaces";
 import { getSession } from "next-auth/react";
@@ -34,7 +33,7 @@ import { AddNewGuest } from "../../components/add-new-guest";
 
 interface EventProps extends GeoProps {
   event?: EventSQL | null;
-  responses?: EventResponse[] | null;
+  guests?: GuestSQL[] | null;
   viewingGuest?: GuestSQL | null;
   email?: string | null;
   weAreTheHost?: boolean | null;
@@ -42,19 +41,19 @@ interface EventProps extends GeoProps {
 
 /** Returns number of guests invited with the given status */
 function countGuestsByStatus(
-  responses: EventResponse[],
+  guests: GuestSQL[],
   status: Status
 ): number {
-  return responses.filter((response) => response.status === status).length;
+  return guests.filter(guest => guest.status === status).length;
 }
 
 function ResponsesView({
   event,
-  responses,
+  guests,
   areWeTheHost
 }: {
   event: EventSQL;
-  responses: EventResponse[];
+  guests: GuestSQL[];
   areWeTheHost: boolean
 }) {
   return (
@@ -62,9 +61,9 @@ function ResponsesView({
       {statuses.map((status, index) => (
         <div key={index}>
           <h3>
-            {statusMap[status]} ({countGuestsByStatus(responses, status)})
+            {statusMap[status]} ({countGuestsByStatus(guests, status)})
           </h3>
-          <GuestsByStatus areWeTheHost={areWeTheHost} responses={responses} status={status} event={event} />
+          <GuestsByStatus areWeTheHost={areWeTheHost} guests={guests} status={status} event={event} />
         </div>
       ))}
     </div>
@@ -73,7 +72,7 @@ function ResponsesView({
 
 function Page({
   event,
-  responses,
+  guests,
   viewingGuest,
   countryCode,
   inEurope,
@@ -224,8 +223,8 @@ function Page({
           {viewingGuest !== null && viewingGuest !== undefined ? (
             <RSVPPrompt viewingGuest={viewingGuest} />
           ) : null}
-          {responses ? (
-            <ResponsesView areWeTheHost={weAreTheHost === true} event={event} responses={responses} />
+          {guests ? (
+            <ResponsesView areWeTheHost={weAreTheHost === true} event={event} guests={guests} />
           ) : null}
         </main>
         <Footer />
@@ -277,8 +276,8 @@ export const getServerSideProps: GetServerSideProps = async (
   const email = session?.user?.email;
   const weAreTheHost = email ? event.host === (await getHostUserByEmail(pool, email)) : false;
 
-  const responses = await eventResponses(pool, event.id);
-  if (responses === null) {
+  const guests = await getGuestsByEvent(pool, event.id);
+  if (guests === null) {
     console.error("Why is responses null?!");
     return {
       props: {
@@ -297,7 +296,7 @@ export const getServerSideProps: GetServerSideProps = async (
   return {
     props: {
       event,
-      responses,
+      guests,
       viewingGuest,
       email: email ? email : null,
       countryCode,

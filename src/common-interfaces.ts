@@ -19,29 +19,14 @@ export interface EventSQL {
   matrix_rsvp_message: string;
 }
 
-export interface EventGuestSQL {
-  event: number,
-  guest: number,
-  status: Status
-}
 export interface GuestSQL {
   id: number,
-  displayname?: string,
-  matrix_username?: string,
-  magic_code: string,
-  phone_number: string
-}
-
-export interface EventResponse {
-  guest_id: number,
-  magic_code: string,
+  event: number,
   displayname: string | null,
   matrix_username: string | null,
-  phone_number: string
+  magic_code: string
   status: Status
 }
-
-/////////
 
 interface ViaMatrixPayload {
   /** Key sent from the Matrix bot to prove it's us! */
