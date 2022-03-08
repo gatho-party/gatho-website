@@ -1,35 +1,7 @@
 import { useRouter } from "next/router";
-import { CreateGuestPayload, EventSQL } from "../src/common-interfaces";
-import { getBySelector, getInputValue } from "../src/frontend-utils";
+import { EventSQL } from "../src/common-interfaces";
+import { addGuest, getBySelector, getInputValue } from "../src/frontend-utils";
 
-async function addGuest({
-  displayname,
-  matrix_username,
-  eventId,
-}: {
-  displayname?: string;
-  matrix_username?: string;
-  eventId: number;
-}): Promise<boolean> {
-  if (displayname === undefined && matrix_username === undefined) {
-    console.error("Both displayname and matrix_username is undefined!");
-    return false;
-  }
-  const data: CreateGuestPayload = {
-    displayname,
-    matrix_username,
-    eventId,
-  };
-  try {
-    await fetch("/api/create-guest", {
-      body: JSON.stringify(data),
-      method: "POST",
-    });
-    return true;
-  } catch (e) {
-    return false;
-  }
-}
 
 export function AddNewGuest({ event }: { event: EventSQL }) {
   const router = useRouter();

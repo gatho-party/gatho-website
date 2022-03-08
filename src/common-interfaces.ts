@@ -51,10 +51,23 @@ export interface RemoveGuestPayload {
   eventId: number;
 }
 
+export interface CreateGuestPublicPayload {
+  eventCode: string;
+  displayname: string;
+  status: Status;
+}
+
 export interface CreateGuestPayload {
   eventId: number
   displayname?: string,
   matrix_username?: string,
+  status?: Status;
+}
+
+export interface CreateGuestResponse {
+  success: boolean;
+  error?: string;
+  magicCode?: string;
 }
 
 export type EventField = "name" | "place" | "time" | "description" | "matrix_room_address" | "matrix_rsvp_message";

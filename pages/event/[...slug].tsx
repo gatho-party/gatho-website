@@ -7,10 +7,7 @@ import {
   getHostUserByEmail,
 } from "../../src/db";
 import Head from "next/head";
-import {
-  EventSQL,
-  GuestSQL,
-} from "../../src/common-interfaces";
+import { EventSQL, GuestSQL } from "../../src/common-interfaces";
 import { getSession } from "next-auth/react";
 import Link from "next/link";
 import { statuses, statusMap } from "../../src/constants";
@@ -23,38 +20,38 @@ import { DefaultHead } from "../../components/default-head";
 import {
   createDatabasePool,
   getCountryCode,
-  isCountryInEurope
+  isCountryInEurope,
 } from "../../src/backend-utils";
 import { GeoProps } from "../../src/interfaces";
 import { CountryContext } from "../../src/context";
 import { GuestsByStatus } from "../../components/guests-by-status";
 import { RSVPPrompt } from "../../components/rsvp-prompt";
 import { AddNewGuest } from "../../components/add-new-guest";
+import Router, { useRouter } from "next/router";
 
 interface EventProps extends GeoProps {
   event?: EventSQL | null;
   guests?: GuestSQL[] | null;
   viewingGuest?: GuestSQL | null;
   email?: string | null;
-  weAreTheHost?: boolean | null;
+  weAreTheHost?: boolean;
+  /** Unique code for the event in the URL (not a number ID) */
+  eventCode?: string;
 }
 
 /** Returns number of guests invited with the given status */
-function countGuestsByStatus(
-  guests: GuestSQL[],
-  status: Status
-): number {
-  return guests.filter(guest => guest.status === status).length;
+function countGuestsByStatus(guests: GuestSQL[], status: Status): number {
+  return guests.filter((guest) => guest.status === status).length;
 }
 
 function ResponsesView({
   event,
   guests,
-  areWeTheHost
+  areWeTheHost,
 }: {
   event: EventSQL;
   guests: GuestSQL[];
-  areWeTheHost: boolean
+  areWeTheHost: boolean;
 }) {
   return (
     <div>
@@ -63,7 +60,12 @@ function ResponsesView({
           <h3>
             {statusMap[status]} ({countGuestsByStatus(guests, status)})
           </h3>
-          <GuestsByStatus areWeTheHost={areWeTheHost} guests={guests} status={status} event={event} />
+          <GuestsByStatus
+            areWeTheHost={areWeTheHost}
+            guests={guests}
+            status={status}
+            event={event}
+          />
         </div>
       ))}
     </div>
@@ -77,8 +79,10 @@ function Page({
   countryCode,
   inEurope,
   weAreTheHost,
-  email
+  email,
+  eventCode,
 }: EventProps) {
+  const router = useRouter();
   if (event === null || event === undefined) {
     return (
       <CountryContext.Provider value={{ countryCode, inEurope }}>
@@ -114,6 +118,7 @@ function Page({
     );
   }
 
+  console.log({ viewingGuest, weAreTheHost });
   return (
     <CountryContext.Provider value={{ countryCode, inEurope }}>
       <div className={`${styles.container} event`}>
@@ -172,8 +177,8 @@ function Page({
           {weAreTheHost ? (
             <div className="event-matrix-blurb">
               <p>
-                Optional: Link with your Matrix group chat - see the
-                the <Link href="/getting-started">getting started guide</Link>.
+                Optional: Link with your Matrix group chat - see the the{" "}
+                <Link href="/getting-started">getting started guide</Link>.
               </p>
             </div>
           ) : event.matrix_room_address.length !== 0 ? (
@@ -213,8 +218,26 @@ function Page({
           {viewingGuest !== null && viewingGuest !== undefined ? (
             <RSVPPrompt viewingGuest={viewingGuest} />
           ) : null}
+
+          {(viewingGuest === undefined || viewingGuest === null) &&
+          weAreTheHost !== true ? (
+            <div>
+              <button
+                onClick={() => {
+                  router.replace(`/rsvp/${eventCode}`);
+                }}
+              >
+                RSVP for this event!
+              </button>
+            </div>
+          ) : null}
+
           {guests ? (
-            <ResponsesView areWeTheHost={weAreTheHost === true} event={event} guests={guests} />
+            <ResponsesView
+              areWeTheHost={weAreTheHost === true}
+              event={event}
+              guests={guests}
+            />
           ) : null}
         </main>
         <Footer />
@@ -227,7 +250,7 @@ export const getServerSideProps: GetServerSideProps = async (
   context
 ): Promise<GetServerSidePropsResult<EventProps>> => {
   const session = await getSession(context);
-  const { req} = context;
+  const { req } = context;
   const countryCode = getCountryCode(req);
   const inEurope = isCountryInEurope(countryCode);
 
@@ -264,7 +287,9 @@ export const getServerSideProps: GetServerSideProps = async (
   }
   // Pass data to the page via props
   const email = session?.user?.email;
-  const weAreTheHost = email ? event.host === (await getHostUserByEmail(pool, email)) : false;
+  const weAreTheHost = email
+    ? event.host === (await getHostUserByEmail(pool, email))
+    : false;
 
   const guests = await getGuestsByEvent(pool, event.id);
   if (guests === null) {
@@ -278,7 +303,7 @@ export const getServerSideProps: GetServerSideProps = async (
   }
 
   // Viewing guest only defined when magic part of slug exists
-  const viewingGuest =
+  let viewingGuest =
     userMagicCode === null
       ? null
       : await findGuestByMagicCode(pool, userMagicCode);
@@ -291,7 +316,8 @@ export const getServerSideProps: GetServerSideProps = async (
       email: email ? email : null,
       countryCode,
       inEurope,
-      weAreTheHost
+      weAreTheHost,
+      eventCode,
     },
   };
 };

@@ -9,7 +9,7 @@ import {
   parseMatrixUsernamePretty,
   prettifiedDisplayName,
 } from "../src/fullstack-utils";
-import { copyToClipboard, getBySelector } from "../src/frontend-utils";
+import { copyToClipboard, generateGuestUrl, getBySelector } from "../src/frontend-utils";
 import { useRouter } from "next/router";
 
 async function removeGuest({
@@ -53,28 +53,28 @@ export function GuestsByStatus({
   return (
     <ul className={`guestsByStatus ${status}`}>
       {guests
-        .filter((response) => response.status === status)
-        .map((r) => {
-          const inviteURL = `${gathoApiUrl}/event/${event.code}/${r.magic_code}`;
-          const viaSignal: boolean = r.matrix_username
-            ? r.matrix_username.includes("signal")
+        .filter((guest) => guest.status === status)
+        .map((guest) => {
+          const inviteURL = generateGuestUrl({eventCode: event.code, guestMagicCode: guest.magic_code});
+          const viaSignal: boolean = guest.matrix_username
+            ? guest.matrix_username.includes("signal")
             : false;
           const showMatrixLink: boolean =
-            viaSignal === false && r.matrix_username !== null;
+            viaSignal === false && guest.matrix_username !== null;
 
-          const name = r.displayname
-            ? prettifiedDisplayName(r.displayname)
-            : parseMatrixUsernamePretty(r.matrix_username as string);
+          const name = guest.displayname
+            ? prettifiedDisplayName(guest.displayname)
+            : parseMatrixUsernamePretty(guest.matrix_username as string);
 
           const li = (
-            <li key={r.id}>
+            <li key={guest.id}>
               <span className="name">{name}</span>
 
               {areWeTheHost ? (
                 <span>
                   <button
                     className={"copy-invite-button"}
-                    onClick={() => copyToClipboard(inviteURL)}
+                    onClick={async () => await copyToClipboard(inviteURL)}
                   >
                     Copy invite link
                   </button>
@@ -84,7 +84,7 @@ export function GuestsByStatus({
                       getBySelector("#remove-guest-button").innerText =
                         "Removing...";
                       await removeGuest({
-                        guestId: r.id,
+                        guestId: guest.id,
                         eventId: event.id,
                       });
                       refreshData();
@@ -101,9 +101,9 @@ export function GuestsByStatus({
                   <a
                     target="_blank"
                     rel="noreferrer"
-                    href={`https://matrix.to/#/${r.matrix_username}`}
+                    href={`https://matrix.to/#/${guest.matrix_username}`}
                   >
-                    {r.matrix_username}
+                    {guest.matrix_username}
                   </a>
                 </p>
               ) : null}
