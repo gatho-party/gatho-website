@@ -1,10 +1,11 @@
-import {
-  GuestSQL,
-  RSVPPayload,
-} from "../src/common-interfaces";
+import { GuestSQL, RSVPPayload } from "../src/common-interfaces";
 import { useRouter } from "next/router";
 import { Status } from "../src/common-interfaces";
-import { parseMatrixUsernamePretty, prettifiedDisplayName } from "../src/fullstack-utils";
+import {
+  parseMatrixUsernamePretty,
+  prettifiedDisplayName,
+} from "../src/fullstack-utils";
+import { statusMap } from "../src/constants";
 
 async function rsvp(status: Status, magic_code: string) {
   const data: RSVPPayload = {
@@ -22,14 +23,22 @@ export function RSVPPrompt({ viewingGuest }: { viewingGuest: GuestSQL }) {
   const refreshData = () => {
     router.replace(router.asPath);
   };
+  const name = viewingGuest.displayname
+    ? prettifiedDisplayName(viewingGuest.displayname)
+    : parseMatrixUsernamePretty(viewingGuest.matrix_username as string);
+
+  const prettyStatus = statusMap[viewingGuest.status];
+  const callToAction =
+    viewingGuest.status === "invited"
+      ? `${name}, can you make it?`
+      : viewingGuest.status === "going"
+      ? `${name}, your status is "${prettyStatus}" 🎉`
+      : `${name}, your status is "${prettyStatus}"`;
+
   return (
     <div className="rsvp-prompt-component">
-      <h3>
-        {viewingGuest.displayname
-          ? prettifiedDisplayName(viewingGuest.displayname)
-          : parseMatrixUsernamePretty(viewingGuest.matrix_username as string)}
-        , can you make it?
-      </h3>
+      <h3>{callToAction}</h3>
+      {viewingGuest.status !== 'notgoing' ? <p>Change your status if you need to:</p> : null}
       <button
         onClick={async () => {
           await rsvp("going", viewingGuest.magic_code);
