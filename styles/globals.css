@@ -275,6 +275,7 @@ h2 {
   white-space: pre-line;
 }
 .event-description {
+  white-space: pre-line;
   font-size: 20px;
   /* color: black; */
   max-width: 700px;
