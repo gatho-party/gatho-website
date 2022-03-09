@@ -39,7 +39,7 @@ export function RSVPPrompt({ viewingGuest }: { viewingGuest: GuestSQL }) {
   return (
     <div className="rsvp-prompt-component">
       <h3>{callToAction}</h3>
-      <p>Change your status if you need to:</p>
+      {viewingGuest.status !== 'invited' ?  <p>Change your status if you need to:</p> : null }
       <button
         onClick={async () => {
           await rsvp("going", viewingGuest.magic_code);
