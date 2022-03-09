@@ -8,6 +8,7 @@ import { GathoLogo } from "../../components/gatho-logo";
 import { LoggedInDisplay } from "../../components/logged-in-display";
 import { Footer } from "../../components/footer";
 import { DefaultHead } from "../../components/default-head";
+import confetti from 'canvas-confetti';
 import {
   createDatabasePool,
   getCountryCode,
@@ -106,6 +107,11 @@ function Page({ event, countryCode, inEurope, email }: EventProps) {
               const status: Status = getBySelector<HTMLSelectElement>(
                 "#rsvp-status"
               ).value as Status;
+
+              if(status === 'going') {
+                confetti();
+              }
+
               const displayname =
                 getBySelector<HTMLInputElement>("#name").value;
               console.log({ status, displayname });

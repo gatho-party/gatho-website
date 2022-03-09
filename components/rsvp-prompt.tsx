@@ -6,6 +6,7 @@ import {
   prettifiedDisplayName,
 } from "../src/fullstack-utils";
 import { statusMap } from "../src/constants";
+import confetti from 'canvas-confetti';
 
 async function rsvp(status: Status, magic_code: string) {
   const data: RSVPPayload = {
@@ -42,6 +43,7 @@ export function RSVPPrompt({ viewingGuest }: { viewingGuest: GuestSQL }) {
       <button
         onClick={async () => {
           await rsvp("going", viewingGuest.magic_code);
+          confetti();
           refreshData();
         }}
       >
