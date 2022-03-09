@@ -2,7 +2,12 @@ import { CreateEventPayload, CreateGuestPublicPayload, CreateGuestResponse, gath
 import { CreateGuestPayload } from "../src/common-interfaces";
 
 export async function copyToClipboard(text: string) {
-  await navigator.clipboard.writeText(text);
+  const clipboard = navigator.clipboard;
+  // Clipboard only available in secure contexts. This is just to fix local dev testing not on
+  // localhost. Will fail silently.
+  if(clipboard) {
+    await clipboard.writeText(text);
+  }
 }
 
 export function delay(ms: number) {

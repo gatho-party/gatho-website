@@ -68,14 +68,12 @@ function Page({ event, countryCode, inEurope, email }: EventProps) {
     );
   }
 
-  const rsvpText = `RSVP for "${event.name}"`;
-
   return (
     <CountryContext.Provider value={{ countryCode, inEurope }}>
       <div className={`${styles.container} event`}>
         <DefaultHead />
         <Head>
-          <title>{rsvpText} - Gatho</title>
+          <title>RSVP for "${event.name}" - Gatho</title>
           <meta
             name="description"
             content={`See who's going, and the time and place of "${event.name}"`}
@@ -88,20 +86,22 @@ function Page({ event, countryCode, inEurope, email }: EventProps) {
               <GathoLogo className={"smallEventLogo"} />
             </a>
           </Link>
-          <h1>{rsvpText}</h1>
+          <h1>RSVP for <Link href={`/event/${event.code}`}>{event.name}</Link></h1>
           <div>
             <input id="name" placeholder="Your name"></input>
           </div>
 
           <div>
-            <label htmlFor="rsvp-status">Your status:</label>
+            <label htmlFor="rsvp-status">Your status:
             <select defaultValue="going" name="rsvp-status" id="rsvp-status">
               <option value="going">Going</option>
               <option value="maybe">Maybe</option>
               <option value="notgoing">Not Going</option>
             </select>
+            </label>
           </div>
           <button
+            id="public-rsvp-button"
             onClick={async () => {
               const status: Status = getBySelector<HTMLSelectElement>(
                 "#rsvp-status"
