@@ -63,7 +63,7 @@ export function RSVPPrompt({ viewingGuest }: { viewingGuest: GuestSQL }) {
           refreshData();
         }}
       >
-        Cant go
+        Can&apos;t go
       </button>
     </div>
   );
