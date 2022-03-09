@@ -16,6 +16,9 @@ export function AddNewGuest({ event }: { event: EventSQL }) {
         id="addGuestButton"
         onClick={async () => {
           const displayname = getInputValue("#addGuestInput");
+          if(displayname === '') {
+            return;
+          }
           getBySelector("#addGuestButton").innerText = "Adding guest...";
           const successfullyAdded = await addGuest({
             displayname,
