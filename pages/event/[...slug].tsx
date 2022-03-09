@@ -243,7 +243,7 @@ function Page({
               <div id="chat-container">
                 {/*
  // @ts-ignore */}
-                <matrix-live homeserver="https://matrix.org" room={event.matrix_room_address} initial-load="60" ></matrix-live>
+                <matrix-live homeserver="https://matrix.jakecopp.chat" room={event.matrix_room_address} initial-load="60" ></matrix-live>
               </div>
               
               {/* eslint-disable */ }
