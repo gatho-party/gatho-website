@@ -196,6 +196,7 @@ function Page({
             </p>
           ) : null}
 
+
           {weAreTheHost ? (
             <div>
               <h2 className="event-description title">Event description:</h2>
@@ -231,6 +232,12 @@ function Page({
               </button>
             </div>
           ) : null}
+
+          {event.id === 43 ? <div id="chat-container">
+            {/*
+ // @ts-ignore */}
+          <matrix-live homeserver="https://matrix.org" room={event.matrix_room_address} initial-load="60"></matrix-live> 
+          </div>: null}
 
           {guests ? (
             <ResponsesView
