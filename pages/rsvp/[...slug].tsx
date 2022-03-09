@@ -73,7 +73,7 @@ function Page({ event, countryCode, inEurope, email }: EventProps) {
       <div className={`${styles.container} event`}>
         <DefaultHead />
         <Head>
-          <title>RSVP for "${event.name}" - Gatho</title>
+          <title>RSVP for {event.name} - Gatho</title>
           <meta
             name="description"
             content={`See who's going, and the time and place of "${event.name}"`}
