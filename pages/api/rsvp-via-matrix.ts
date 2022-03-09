@@ -1,6 +1,6 @@
 import type { NextApiRequest, NextApiResponse } from 'next'
 import { RSVPViaMatrixPayload } from '../../src/common-interfaces';
-import { createNewGuest, findGuestByMatrixUsername, setStatusViaGuestAndEvent } from '../../src/db';
+import { createNewGuest, findGuestByMatrixUsernameAndEvent, setStatusViaGuestAndEvent } from '../../src/db';
 import { getPoolWithMatrixRoomId, isMatrixBotKeyIncorrect, isNotPost } from '../../src/backend-utils';
 
 export default async function handler(
@@ -26,10 +26,10 @@ export default async function handler(
   const { pool, event } = poolAndEvent;
   const eventId = event.id;
 
-  // First we need to make sure the guest exists.
+  // First we check if the guest exists FOR OUR EVENT
   let guestId: number | null = null;
   if (matrix_username !== undefined) {
-    const guest = await findGuestByMatrixUsername(pool, matrix_username);
+    const guest = await findGuestByMatrixUsernameAndEvent(pool, matrix_username, eventId);
     console.log("Received guest:");
     console.log(JSON.stringify(guest));
     if (guest !== null) {

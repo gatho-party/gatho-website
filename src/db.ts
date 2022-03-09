@@ -122,14 +122,14 @@ export async function findGuestByMagicCode(
   return possibleGuest;
 }
 
-/** Only use when looking up by a Matrix username! */
-export async function findGuestByMatrixUsername(
+export async function findGuestByMatrixUsernameAndEvent(
   client: Pool,
-  name: string
+  name: string,
+  eventId: number
 ): Promise<GuestSQL | null> {
   const res = await client.query(
-    "select * from guests where guests.matrix_username = $1",
-    [name]
+    "select * from guests where guests.matrix_username = $1 and guests.event = $2",
+    [name, eventId]
   );
   const possibleGuest = res.rows[0];
   if (possibleGuest === undefined) {
