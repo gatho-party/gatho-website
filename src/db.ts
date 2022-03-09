@@ -206,17 +206,17 @@ export async function removeGuestFromEvent(
  * Creates a new guest. Handles creating the unique code and setting initial status.
  * @param client SQL client
  * @param param1 Fields
- * @returns Guest ID if success, null if failure
+ * @returns Guest ID and magic code if success, null if failure
  */
 export async function createNewGuest(
   client: Pool,
-  { event, displayname, matrix_username }: {
+  { event, displayname, matrix_username, status = "invited" }: {
     event: number,
     displayname?: string,
-    matrix_username?: string ,
+    matrix_username?: string,
+    status?: Status
   }
-): Promise<number | null> {
-
+): Promise<null | {guestId: number, magicCode: string} | null> {
   // Insert guest
   const urlName = displayname ? displayname : (matrix_username
     ? parseMatrixUsernamePretty(matrix_username)
@@ -225,7 +225,6 @@ export async function createNewGuest(
   const plainAlphaName = urlName.replace(regex, "-");
   const magicCode = `${encodeURIComponent(plainAlphaName)}-${crypto.randomBytes(10).toString('hex')}`;
 
-  const status: Status = 'invited';
   try {
     await client.query(
       "insert into guests(event, displayname, matrix_username, magic_code, status) values ($1,$2, $3, $4,$5);",
@@ -237,7 +236,7 @@ export async function createNewGuest(
       "select g.id from guests g where magic_code = $1", [magicCode]
     );
     const guestId = res.rows[0].id;
-    return guestId;
+    return {guestId, magicCode};
   } catch (e) {
     console.error(`Error creating guest displayname: ${displayname}, matrix: ${matrix_username}: ${e}`);
     return null;

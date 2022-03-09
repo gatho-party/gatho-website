@@ -1,7 +1,13 @@
-import { CreateEventPayload, UpdateEventFieldPayload } from "./common-interfaces";
+import { CreateEventPayload, CreateGuestPublicPayload, CreateGuestResponse, gathoApiUrl, Status, UpdateEventFieldPayload } from "./common-interfaces";
+import { CreateGuestPayload } from "../src/common-interfaces";
 
-export function copyToClipboard(text: string) {
-  navigator.clipboard.writeText(text);
+export async function copyToClipboard(text: string) {
+  const clipboard = navigator.clipboard;
+  // Clipboard only available in secure contexts. This is just to fix local dev testing not on
+  // localhost. Will fail silently.
+  if(clipboard) {
+    await clipboard.writeText(text);
+  }
 }
 
 export function delay(ms: number) {
@@ -92,4 +98,78 @@ export async function updateEventFieldFromFrontend({
     method: "POST",
   });
   return result;
+}
+
+/** Send a POST request to the backend to create a new guest */
+export async function addGuest({
+  displayname,
+  matrix_username,
+  eventId,
+  status
+}: {
+  displayname?: string;
+  matrix_username?: string;
+  eventId: number;
+  status?: Status;
+}): Promise<boolean> {
+  if (displayname === undefined && matrix_username === undefined) {
+    console.error("Both displayname and matrix_username is undefined!");
+    return false;
+  }
+  const data: CreateGuestPayload = {
+    displayname,
+    matrix_username,
+    eventId,
+    status
+  };
+  try {
+    await fetch("/api/create-guest", {
+      body: JSON.stringify(data),
+      method: "POST",
+    });
+    return true;
+  } catch (e) {
+    return false;
+  }
+}
+
+/**
+ * Send a POST request to the backend to create a new guest. can be called by any client with
+ * an event code.
+ */
+export async function addGuestPublic({
+  displayname,
+  eventCode,
+  status
+}: {
+  displayname?: string;
+  eventCode: string;
+  status: Status;
+}): Promise<null | string> {
+  if (displayname === undefined) {
+    console.error("displayname undefined!");
+    return null;
+  }
+  const data: CreateGuestPublicPayload = {
+    displayname,
+    status,
+    eventCode
+  };
+  try {
+    const result: CreateGuestResponse = await (await fetch("/api/create-guest-public", {
+      body: JSON.stringify(data),
+      method: "POST",
+    })).json();
+    if(result.success === false) {
+      console.error(result.error);
+      return null;
+    }
+    return result.magicCode ? result.magicCode : null;
+  } catch (e) {
+    return null;
+  }
+}
+
+export function generateGuestUrl({eventCode, guestMagicCode}:{eventCode: string, guestMagicCode: string}) {
+  return `${gathoApiUrl}/event/${eventCode}/${guestMagicCode}`;
 }

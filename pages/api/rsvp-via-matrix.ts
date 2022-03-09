@@ -37,21 +37,23 @@ export default async function handler(
     }
   }
 
+  let guestResponse;
   if (guestId === null) {
-    guestId = await createNewGuest(pool, { event: eventId, matrix_username, displayname });
-  }
-  if (guestId === null) {
-    res.status(500).json({ result: `failed to update DB - unable to create new guest` })
-    return;
-  }
+    guestResponse = await createNewGuest(pool, { event: eventId, matrix_username, displayname, status });
 
-  const result = await setStatusViaGuestAndEvent(pool, { guestId, eventId, status });
-  if (result === false) {
-    res.status(500).json({ result: `failed to update DB - likely couldn't find guest by name` })
-    return;
+    if (guestResponse === null) {
+      res.status(500).json({ result: `failed to update DB - unable to create new guest` })
+      return;
+    }
+    guestId = guestResponse.guestId;
   }
-  res.status(200).json({
-    result:
-      `Success: ${matrix_username} is '${status}' for ${matrix_room_address} (event ${eventId})`
-  });
+  const success = await setStatusViaGuestAndEvent(pool, {guestId, eventId, status});
+  if(success) {
+    res.status(200).json({
+      result:
+        `Success: ${matrix_username} is '${status}' for ${matrix_room_address} (event ${eventId})`
+    });
+    return;
+  } 
+  res.status(500).json({ result: `Found guest but unable to set status` })
 }

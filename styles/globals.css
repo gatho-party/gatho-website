@@ -79,13 +79,11 @@ sub {
   line-height: 0px;
 } */
 /* Gatho title */
-.event h1 a {
+/* .event h1 a {
   display: inline-block;
   line-height: 0px;
-  /* color: #950099; */
-  opacity: 0.37;
   text-decoration: underline;
-}
+} */
 
 /* Event title */
 .event h2 {
@@ -450,7 +448,7 @@ button {
   cursor: pointer;
 }
 
-input[type] {
+input {
   background: var(--background-color);
   border: var(--border-width) solid var(--color-control-border);
   border-radius: var(--border-radius);
@@ -460,15 +458,29 @@ input[type] {
   display: block;
   font-size: 1rem;
   padding: 0.5rem 1rem;
+}
+
+/** The input on the homepage for typing in email */
+#signin-landing input {
   width: 100%;
 }
 
-.signin a.button,
-.signin button,
-.signin input[type="text"] {
+select#rsvp-status {
+  margin-left: 5px;
+  padding: 0.5rem 0.8rem;
+  vertical-align: bottom;
+}
+
+label[for="rsvp-status"] {
+  display: inline-block;
+  margin-top: 50px;
+  font-size: 30px;
+}
+
+button#public-rsvp-button {
   display: block;
-  margin-left: auto;
-  margin-right: auto;
+  margin-top: 50px;
+  padding: 0.75rem 1rem;
 }
 
 a.button,
