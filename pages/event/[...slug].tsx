@@ -225,7 +225,7 @@ function Page({
           ) : 
           null
           }
-          {event.id === 43 ? (
+          {event.id === 44 ? (
             <div>
 
             <p className="join-group-chat">
