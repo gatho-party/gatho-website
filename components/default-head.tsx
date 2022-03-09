@@ -37,6 +37,7 @@ export function DefaultHead() {
       />
       <link rel="shortcut icon" href="" />
       <meta name="author" content="Jake Coppinger"></meta>
+      <link rel="stylesheet" type="text/css" href="https://live.hello-matrix.net/matrix-live.css"></link>
     </Head>
   );
 }

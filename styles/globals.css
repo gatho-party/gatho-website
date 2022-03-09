@@ -200,8 +200,8 @@ p {
 }
 
 img {
-  width: 100%;
-  height: auto;
+  /* width: 100%; */
+  /* height: auto; */
 }
 
 .mockup-container {
@@ -517,4 +517,9 @@ button {
   transition: opacity 0.3s;
   text-align: left;
   display: block;
+}
+
+.matrix-live-main {
+  max-height: 500px;
+  overflow-y: scroll;
 }

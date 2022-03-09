@@ -28,6 +28,7 @@ import { GuestsByStatus } from "../../components/guests-by-status";
 import { RSVPPrompt } from "../../components/rsvp-prompt";
 import { AddNewGuest } from "../../components/add-new-guest";
 import { useRouter } from "next/router";
+import Script from "next/script";
 
 interface EventProps extends GeoProps {
   event?: EventSQL | null;
@@ -174,27 +175,6 @@ function Page({
             <h2>🕦 {event.time}</h2>
           )}
 
-          {weAreTheHost ? (
-            <div className="event-matrix-blurb">
-              <p>
-                Optional: Link with your Matrix group chat - see the the{" "}
-                <Link href="/getting-started">getting started guide</Link>.
-              </p>
-            </div>
-          ) : event.matrix_room_address.length !== 0 ? (
-            <p className="join-group-chat">
-              💬{" "}
-              <a
-                href={`https://matrix.to/#/${event.matrix_room_address}`}
-                target="_blank"
-                rel="noreferrer"
-              >
-                {" "}
-                Join the event group chat
-              </a>{" "}
-              in a Matrix-compatible app! (eg. Element)
-            </p>
-          ) : null}
 
 
           {weAreTheHost ? (
@@ -233,11 +213,46 @@ function Page({
             </div>
           ) : null}
 
-          {event.id === 43 ? <div id="chat-container">
-            {/*
+          {weAreTheHost ? (
+            <div className="event-matrix-blurb">
+              <br>
+              </br>
+              <p>
+                Optional: Link with your Matrix group chat - see the the{" "}
+                <Link href="/getting-started">getting started guide</Link>.
+              </p>
+            </div>
+          ) : 
+          null
+          }
+          {event.id === 43 ? (
+            <div>
+
+            <p className="join-group-chat">
+              💬{" "}
+              <a
+                href={`https://matrix.to/#/${event.matrix_room_address}`}
+                target="_blank"
+                rel="noreferrer"
+              >
+                {" "}
+                Join the event group chat
+              </a>{" "}
+              in a Matrix-compatible app! (eg. Element)
+              <br></br>Message the host if you&apos;d like to join via Signal.
+            </p>
+              <div id="chat-container">
+                {/*
  // @ts-ignore */}
-          <matrix-live homeserver="https://matrix.org" room={event.matrix_room_address} initial-load="60"></matrix-live> 
-          </div>: null}
+                <matrix-live homeserver="https://matrix.org" room={event.matrix_room_address} initial-load="60" ></matrix-live>
+              </div>
+              
+              {/* eslint-disable */ }
+              <script src="https://code.jquery.com/jquery-3.1.1.min.js" integrity="sha256-hVVnYaiADRTO2PzUGmuLJr8BLUSjGIZsDYGmIJLv2b8=" crossOrigin="anonymous" ></script>
+              <script src="https://live.hello-matrix.net/matrix-live-min.js"></script>
+              {/* eslint-enable */ }
+            </div>
+          ) : null}
 
           {guests ? (
             <ResponsesView
