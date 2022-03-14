@@ -27,7 +27,7 @@
     "accept-language-parser": "^1.5.0",
     "canvas-confetti": "^1.5.1",
     "next": "12.1.0",
-    "next-auth": "^4.0.0-beta.7",
+    "next-auth": "^4.2.1",
     "next-plausible": "^3.1.4",
     "nodemailer": "^6.7.1",
     "pg": "^8.7.1",
