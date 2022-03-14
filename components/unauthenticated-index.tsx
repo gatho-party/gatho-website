@@ -66,6 +66,7 @@ export function UnauthenticatedIndex({ csrfToken }: UnauthenticatedIndexProps) {
             <div className="right">
               {/* eslint-disable */}
               <img
+                className="landing-image"
                 src="/img/rsvp-list.png"
                 alt="Screenshot of inviting friend over SMS, maybe multiple screenshots of different streams"
               ></img>

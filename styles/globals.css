@@ -199,9 +199,9 @@ p {
   margin-top: 3px;
 }
 
-img {
-  /* width: 100%; */
-  /* height: auto; */
+img.landing-image {
+  width: 100%;
+  height: auto;
 }
 
 .mockup-container {
