@@ -56,7 +56,7 @@ Run `./scripts/create-database-tables-local.sh`
 
 ## Running website dev server
 - `npm i`
-- `npm build`
+- `npm run build`
 - `npm run dev`
 
 # Debugging
