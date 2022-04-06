@@ -4,12 +4,10 @@ import { Footer } from "./footer";
 import Link from "next/link";
 import { SigninSignupButton } from "./signin-signup-button";
 import { SigninDialog } from "./signin-dialog";
-import { LoggedInDisplay } from "./logged-in-display";
 
 export function UnauthenticatedIndex({ csrfToken }: UnauthenticatedIndexProps) {
   return (
     <div>
-        <LoggedInDisplay authenticatedUser={undefined} />
       <div className="logobox">
         {/* eslint-disable */}
         {/* The CSS for this img really needs some work :) */}
