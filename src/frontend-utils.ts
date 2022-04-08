@@ -1,11 +1,11 @@
-import { CreateEventPayload, CreateGuestPublicPayload, CreateGuestResponse, gathoApiUrl, Status, UpdateEventFieldPayload } from "./common-interfaces";
+import { CreateEventPayload, CreateGuestPublicPayload, CreateGuestResponse, gathoApiUrl, LocalstorageInterface, Status, UpdateEventFieldPayload } from "./common-interfaces";
 import { CreateGuestPayload } from "../src/common-interfaces";
 
 export async function copyToClipboard(text: string) {
   const clipboard = navigator.clipboard;
   // Clipboard only available in secure contexts. This is just to fix local dev testing not on
   // localhost. Will fail silently.
-  if(clipboard) {
+  if (clipboard) {
     await clipboard.writeText(text);
   }
 }
@@ -160,7 +160,7 @@ export async function addGuestPublic({
       body: JSON.stringify(data),
       method: "POST",
     })).json();
-    if(result.success === false) {
+    if (result.success === false) {
       console.error(result.error);
       return null;
     }
@@ -170,6 +170,28 @@ export async function addGuestPublic({
   }
 }
 
-export function generateGuestUrl({eventCode, guestMagicCode}:{eventCode: string, guestMagicCode: string}) {
+export function generateGuestUrl({ eventCode, guestMagicCode }: { eventCode: string, guestMagicCode: string }) {
   return `${gathoApiUrl}/event/${eventCode}/${guestMagicCode}`;
 }
+
+// TODO: Add tests
+function getLocalStorageRSVPs(): LocalstorageInterface {
+  const lsItem = localStorage.getItem('rsvps');
+  return lsItem ? JSON.parse(lsItem) : { rsvpedEvents: [] };
+}
+function setLocalStorageRSVPs(rsvps: LocalstorageInterface): void {
+  localStorage.setItem('rsvps', JSON.stringify(rsvps));
+}
+function addEventToLocalStorageRSVPs(rsvps: LocalstorageInterface, long_event_code: string, guest_magic_code: string): LocalstorageInterface {
+  const eventNotInLS = rsvps.rsvpedEvents.find(storedEvent => storedEvent.event_code === long_event_code) === undefined;
+  const newRSVPs = Object.assign({}, rsvps);
+
+  if (eventNotInLS) {
+    newRSVPs.rsvpedEvents.push({ event_code: long_event_code, guest_magic_code })
+    long_event_code
+  }
+  return newRSVPs;
+}
+getLocalStorageRSVPs;
+setLocalStorageRSVPs;
+addEventToLocalStorageRSVPs;

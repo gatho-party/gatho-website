@@ -115,3 +115,14 @@ export interface SetRSVPMessageReq extends ViaMatrixPayload {
   room_id: string,
   rsvp_message_id: string,
 }
+
+
+export interface EventRSVPRecord {
+  /** Long code for event */
+  event_code: string;
+  guest_magic_code: string;
+}
+
+export interface LocalstorageInterface {
+  rsvpedEvents: EventRSVPRecord[];
+}

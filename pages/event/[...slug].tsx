@@ -7,7 +7,7 @@ import {
   getHostUserByEmail,
 } from "../../src/db";
 import Head from "next/head";
-import { EventSQL, GuestSQL } from "../../src/common-interfaces";
+import { EventSQL, GuestSQL} from "../../src/common-interfaces";
 import { getSession } from "next-auth/react";
 import Link from "next/link";
 import { statuses, statusMap } from "../../src/constants";
@@ -37,6 +37,7 @@ interface EventProps extends GeoProps {
   weAreTheHost?: boolean;
   /** Unique code for the event in the URL (not a number ID) */
   eventCode?: string;
+  userMagicCode?: string | null;
 }
 
 /** Returns number of guests invited with the given status */
@@ -335,6 +336,7 @@ export const getServerSideProps: GetServerSideProps = async (
       viewingGuest,
       email: email ? email : null,
       countryCode,
+      userMagicCode,
       inEurope,
       weAreTheHost,
       eventCode,
