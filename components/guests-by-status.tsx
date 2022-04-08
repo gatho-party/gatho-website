@@ -78,7 +78,7 @@ export function GuestsByStatus({
               <span className="name">{name}</span>
 
               {areWeTheHost ? (
-                <span id="host-controls">
+                <div id="host-controls">
                   <button
                     onClick={async () => await copyToClipboard(inviteURL)}
                   >
@@ -96,7 +96,7 @@ export function GuestsByStatus({
                       refreshData();
                     }}
                   >
-                    Remove guest
+                    Remove
                   </button>
                   <select
                     defaultValue="default"
@@ -148,7 +148,7 @@ export function GuestsByStatus({
                       Invited
                     </option>
                   </select>
-                </span>
+                </div>
               ) : null}
 
               {showMatrixLink ? (

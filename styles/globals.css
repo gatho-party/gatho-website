@@ -1,4 +1,5 @@
 :root {
+  --button-height: 30px;
   --background-color: white;
   --primary-colour: rgb(0, 183, 255);
   --landing-blend: multiply;
@@ -93,7 +94,7 @@ sub {
 
 /* Adding new guest to event */
 #addGuestButton {
-  width: 100px;
+  height: var(--button-height);
 }
 #addGuestInput {
   width: calc(100% - 100px);
@@ -125,8 +126,9 @@ p.dm-via-matrix {
 
 #host-controls button,
 #host-controls select {
-  margin-left: 10px;
+  margin-right: 5px;
   vertical-align: text-bottom;
+  height: var(--button-height);
 }
 
 .landingLogo {
