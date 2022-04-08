@@ -8,7 +8,11 @@ import {
   parseMatrixUsernamePretty,
   prettifiedDisplayName,
 } from "../src/fullstack-utils";
-import { copyToClipboard, generateGuestUrl, getBySelector } from "../src/frontend-utils";
+import {
+  copyToClipboard,
+  generateGuestUrl,
+  getBySelector,
+} from "../src/frontend-utils";
 import { useRouter } from "next/router";
 
 async function removeGuest({
@@ -54,7 +58,10 @@ export function GuestsByStatus({
       {guests
         .filter((guest) => guest.status === status)
         .map((guest) => {
-          const inviteURL = generateGuestUrl({eventCode: event.code, guestMagicCode: guest.magic_code});
+          const inviteURL = generateGuestUrl({
+            eventCode: event.code,
+            guestMagicCode: guest.magic_code,
+          });
           const viaSignal: boolean = guest.matrix_username
             ? guest.matrix_username.includes("signal")
             : false;
@@ -70,9 +77,8 @@ export function GuestsByStatus({
               <span className="name">{name}</span>
 
               {areWeTheHost ? (
-                <span>
+                <span id="host-controls">
                   <button
-                    className={"copy-invite-button"}
                     onClick={async () => await copyToClipboard(inviteURL)}
                   >
                     Copy invite link
@@ -91,6 +97,15 @@ export function GuestsByStatus({
                   >
                     Remove guest
                   </button>
+                  <select id="override-status">
+                    <option value="" disabled selected>
+                      Override guest status 
+                    </option>
+                    <option value="going">Going</option>
+                    <option value="maybe">Maybe</option>
+                    <option value="notgoing">Not Going</option>
+                    <option value="invited">Invited</option>
+                  </select>
                 </span>
               ) : null}
 

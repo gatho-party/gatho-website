@@ -123,7 +123,7 @@ p.dm-via-matrix {
   letter-spacing: initial;
 }
 
-button.copy-invite-button {
+#host-controls button, #host-controls select {
   margin-left: 10px;
   vertical-align: text-bottom;
 }
