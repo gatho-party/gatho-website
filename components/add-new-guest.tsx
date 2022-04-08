@@ -2,7 +2,6 @@ import { useRouter } from "next/router";
 import { EventSQL } from "../src/common-interfaces";
 import { addGuest, getBySelector, getInputValue } from "../src/frontend-utils";
 
-
 export function AddNewGuest({ event }: { event: EventSQL }) {
   const router = useRouter();
   const refreshData = () => {
@@ -10,13 +9,13 @@ export function AddNewGuest({ event }: { event: EventSQL }) {
   };
   return (
     <>
-      <h3>Add a new guest (only visible to you)</h3>
+      <h3>Add a new guest</h3>
       <input id="addGuestInput" placeholder="Guest name"></input>
       <button
         id="addGuestButton"
         onClick={async () => {
           const displayname = getInputValue("#addGuestInput");
-          if(displayname === '') {
+          if (displayname === "") {
             return;
           }
           getBySelector("#addGuestButton").innerText = "Adding guest...";

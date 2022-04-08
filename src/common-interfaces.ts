@@ -33,11 +33,16 @@ interface ViaMatrixPayload {
   secret_matrix_bot_key: string,
 }
 
+/** When setting a guests status */
 export interface RSVPPayload {
   status: Status,
   guest_magic_code: string,
 }
-
+/** Result from server when setting guest's status */
+export interface RSVPResponsePayload {
+  success: boolean;
+  message?: string;
+}
 
 export interface RSVPViaMatrixPayload extends ViaMatrixPayload {
   status: Status,

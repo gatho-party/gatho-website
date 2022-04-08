@@ -1,4 +1,8 @@
-import { GuestSQL, RSVPPayload } from "../src/common-interfaces";
+import {
+  GuestSQL,
+  RSVPPayload,
+  RSVPResponsePayload,
+} from "../src/common-interfaces";
 import { useRouter } from "next/router";
 import { Status } from "../src/common-interfaces";
 import {
@@ -6,9 +10,18 @@ import {
   prettifiedDisplayName,
 } from "../src/fullstack-utils";
 import { statusMap } from "../src/constants";
-import confetti from 'canvas-confetti';
+import confetti from "canvas-confetti";
 
-async function rsvp(status: Status, magic_code: string) {
+/**
+ * Send RSVP to the backend for a given users
+ * @param status Status of the guest
+ * @param magic_code Secret code for the user to identify them
+ * @returns Success or failure object
+ */
+export async function sendRSVPStatus(
+  status: Status,
+  magic_code: string
+): Promise<RSVPResponsePayload> {
   const data: RSVPPayload = {
     guest_magic_code: magic_code,
     status,
@@ -17,7 +30,7 @@ async function rsvp(status: Status, magic_code: string) {
     body: JSON.stringify(data),
     method: "POST",
   });
-  return result;
+  return result.json();
 }
 export function RSVPPrompt({ viewingGuest }: { viewingGuest: GuestSQL }) {
   const router = useRouter();
@@ -39,10 +52,12 @@ export function RSVPPrompt({ viewingGuest }: { viewingGuest: GuestSQL }) {
   return (
     <div className="rsvp-prompt-component">
       <h3>{callToAction}</h3>
-      {viewingGuest.status !== 'invited' ?  <p>Change your status if you need to:</p> : null }
+      {viewingGuest.status !== "invited" ? (
+        <p>Change your status if you need to:</p>
+      ) : null}
       <button
         onClick={async () => {
-          await rsvp("going", viewingGuest.magic_code);
+          await sendRSVPStatus("going", viewingGuest.magic_code);
           confetti();
           refreshData();
         }}
@@ -51,7 +66,7 @@ export function RSVPPrompt({ viewingGuest }: { viewingGuest: GuestSQL }) {
       </button>
       <button
         onClick={async () => {
-          await rsvp("maybe", viewingGuest.magic_code);
+          await sendRSVPStatus("maybe", viewingGuest.magic_code);
           refreshData();
         }}
       >
@@ -59,7 +74,7 @@ export function RSVPPrompt({ viewingGuest }: { viewingGuest: GuestSQL }) {
       </button>
       <button
         onClick={async () => {
-          await rsvp("notgoing", viewingGuest.magic_code);
+          await sendRSVPStatus("notgoing", viewingGuest.magic_code);
           refreshData();
         }}
       >

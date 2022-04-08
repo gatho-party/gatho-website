@@ -14,6 +14,7 @@ import {
   getBySelector,
 } from "../src/frontend-utils";
 import { useRouter } from "next/router";
+import { sendRSVPStatus } from "./rsvp-prompt";
 
 async function removeGuest({
   eventId,
@@ -97,14 +98,55 @@ export function GuestsByStatus({
                   >
                     Remove guest
                   </button>
-                  <select id="override-status">
-                    <option value="" disabled selected>
-                      Override guest status 
+                  <select
+                    defaultValue="default"
+                    id="override-status"
+                    onChange={async (e) => {
+                      const newStatus: Status | string = e.target.value;
+                      if (
+                        newStatus !== "going" &&
+                        newStatus !== "invited" &&
+                        newStatus !== "notgoing" &&
+                        newStatus !== "maybe"
+                      ) {
+                        return;
+                      }
+                      console.log(guest.magic_code);
+                      const result = await sendRSVPStatus(
+                        newStatus,
+                        guest.magic_code
+                      );
+                      console.log({ result });
+                      if (result.success === false) {
+                        alert(
+                          "Failed to set status, please try again or contact Gatho."
+                        );
+                        return;
+                      }
+                      refreshData();
+                    }}
+                  >
+                    <option value="default" disabled>
+                      Set status
                     </option>
-                    <option value="going">Going</option>
-                    <option value="maybe">Maybe</option>
-                    <option value="notgoing">Not Going</option>
-                    <option value="invited">Invited</option>
+                    <option value="going" disabled={guest.status === "going"}>
+                      Going
+                    </option>
+                    <option value="maybe" disabled={guest.status === "maybe"}>
+                      Maybe
+                    </option>
+                    <option
+                      value="notgoing"
+                      disabled={guest.status === "notgoing"}
+                    >
+                      Not Going
+                    </option>
+                    <option
+                      value="invited"
+                      disabled={guest.status === "invited"}
+                    >
+                      Invited
+                    </option>
                   </select>
                 </span>
               ) : null}

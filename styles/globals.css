@@ -123,7 +123,8 @@ p.dm-via-matrix {
   letter-spacing: initial;
 }
 
-#host-controls button, #host-controls select {
+#host-controls button,
+#host-controls select {
   margin-left: 10px;
   vertical-align: text-bottom;
 }
@@ -484,7 +485,7 @@ button#public-rsvp-button {
   padding: 0.75rem 1rem;
 }
 
-a.button,
+/* a.button,
 button {
   border: var(--border-width) solid var(--color-control-border);
   border-radius: var(--border-radius);
@@ -503,7 +504,34 @@ a.button:visited,
 button {
   background-color: var(--background-color);
   color: var(--color-primary);
+} */
+
+
+button,
+a.button, select {
+  border-radius: var(--border-radius);
+  display: inline-block;
+  padding: 0.2em 1.45em;
+  margin: 0.1em;
+  border: 0.15em solid #cccccc;
+  box-sizing: border-box;
+  text-decoration: none;
+  font-family: "Segoe UI", "Roboto", sans-serif;
+  font-weight: 400;
+  color: #000000;
+  background-color: #cccccc;
+  text-align: center;
+  position: relative;
 }
+button:hover,
+a.button:hover {
+  border-color: #7a7a7a;
+}
+a.button:active,
+button:active {
+  background-color: #999999;
+}
+
 #signin-landing button {
   margin: initial;
   display: block;

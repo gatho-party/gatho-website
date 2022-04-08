@@ -118,7 +118,6 @@ function Page({
     );
   }
 
-  console.log({ viewingGuest, weAreTheHost });
   return (
     <CountryContext.Provider value={{ countryCode, inEurope }}>
       <div className={`${styles.container} event`}>
