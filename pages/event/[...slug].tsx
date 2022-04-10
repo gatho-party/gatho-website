@@ -129,7 +129,7 @@ function Page({
     const maybeEventToken = rsvps.rsvpedEvents.find(
       event => event.long_event_code === event.long_event_code);
     if(finalUserMagicCode === undefined && longEventCode !== undefined
-        && userMagicCode !== undefined && userMagicCode !== null) {
+        && userMagicCode !== undefined && userMagicCode !== null && weAreTheHost === false) {
       // We have a magic link
       if(!maybeEventToken) {
         // We have a magic code but it's not stored
@@ -137,7 +137,7 @@ function Page({
         setLocalStorageRSVPs(newRSVPs);
       }
     }
-    if(finalUserMagicCode === undefined && maybeEventToken) {
+    if(finalUserMagicCode === undefined && maybeEventToken && weAreTheHost === false) {
       // Redirect to url with the user code
       router.replace(`${router.asPath}/${maybeEventToken.guest_magic_code}`);
     }
