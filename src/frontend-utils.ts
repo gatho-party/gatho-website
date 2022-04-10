@@ -1,4 +1,4 @@
-import { CreateEventPayload, CreateGuestPublicPayload, CreateGuestResponse, gathoApiUrl, LocalstorageInterface, Status, UpdateEventFieldPayload } from "./common-interfaces";
+import { CreateEventPayload, CreateGuestPublicPayload, CreateGuestResponse, EventRSVPRecord, gathoApiUrl, LocalstorageInterface, Status, UpdateEventFieldPayload } from "./common-interfaces";
 import { CreateGuestPayload } from "../src/common-interfaces";
 
 export async function copyToClipboard(text: string) {
@@ -174,24 +174,19 @@ export function generateGuestUrl({ eventCode, guestMagicCode }: { eventCode: str
   return `${gathoApiUrl}/event/${eventCode}/${guestMagicCode}`;
 }
 
-// TODO: Add tests
-function getLocalStorageRSVPs(): LocalstorageInterface {
+export function getLocalStorageRSVPs(): LocalstorageInterface {
   const lsItem = localStorage.getItem('rsvps');
   return lsItem ? JSON.parse(lsItem) : { rsvpedEvents: [] };
 }
-function setLocalStorageRSVPs(rsvps: LocalstorageInterface): void {
+export function setLocalStorageRSVPs(rsvps: LocalstorageInterface): void {
   localStorage.setItem('rsvps', JSON.stringify(rsvps));
 }
-function addEventToLocalStorageRSVPs(rsvps: LocalstorageInterface, long_event_code: string, guest_magic_code: string): LocalstorageInterface {
-  const eventNotInLS = rsvps.rsvpedEvents.find(storedEvent => storedEvent.event_code === long_event_code) === undefined;
+export function addEventToLocalStorageRSVPs(rsvps: LocalstorageInterface, event: EventRSVPRecord): LocalstorageInterface {
+  const eventNotInLS = rsvps.rsvpedEvents.find(storedEvent => storedEvent.event_code === event.event_code) === undefined;
   const newRSVPs = Object.assign({}, rsvps);
 
   if (eventNotInLS) {
-    newRSVPs.rsvpedEvents.push({ event_code: long_event_code, guest_magic_code })
-    long_event_code
+    newRSVPs.rsvpedEvents.push(event)
   }
   return newRSVPs;
 }
-getLocalStorageRSVPs;
-setLocalStorageRSVPs;
-addEventToLocalStorageRSVPs;
