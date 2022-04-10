@@ -119,7 +119,7 @@ export interface SetRSVPMessageReq extends ViaMatrixPayload {
 
 export interface EventRSVPRecord {
   /** Long code for event */
-  event_code: string;
+  long_event_code: string;
   guest_magic_code: string;
 }
 

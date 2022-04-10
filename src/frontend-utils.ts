@@ -182,7 +182,7 @@ export function setLocalStorageRSVPs(rsvps: LocalstorageInterface): void {
   localStorage.setItem('rsvps', JSON.stringify(rsvps));
 }
 export function addEventToLocalStorageRSVPs(rsvps: LocalstorageInterface, event: EventRSVPRecord): LocalstorageInterface {
-  const eventNotInLS = rsvps.rsvpedEvents.find(storedEvent => storedEvent.event_code === event.event_code) === undefined;
+  const eventNotInLS = rsvps.rsvpedEvents.find(storedEvent => storedEvent.long_event_code === event.long_event_code) === undefined;
   const newRSVPs = Object.assign({}, rsvps);
 
   if (eventNotInLS) {

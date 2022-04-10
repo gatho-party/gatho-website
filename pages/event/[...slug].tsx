@@ -28,6 +28,7 @@ import { GuestsByStatus } from "../../components/guests-by-status";
 import { RSVPPrompt } from "../../components/rsvp-prompt";
 import { AddNewGuest } from "../../components/add-new-guest";
 import { useRouter } from "next/router";
+import { addEventToLocalStorageRSVPs, getLocalStorageRSVPs, setLocalStorageRSVPs } from "../../src/frontend-utils";
 
 interface EventProps extends GeoProps {
   event?: EventSQL | null;
@@ -36,7 +37,7 @@ interface EventProps extends GeoProps {
   email?: string | null;
   weAreTheHost?: boolean;
   /** Unique code for the event in the URL (not a number ID) */
-  eventCode?: string;
+  longEventCode?: string;
   userMagicCode?: string | null;
 }
 
@@ -81,7 +82,8 @@ function Page({
   inEurope,
   weAreTheHost,
   email,
-  eventCode,
+  longEventCode,
+  userMagicCode
 }: EventProps) {
   const router = useRouter();
   if (event === null || event === undefined) {
@@ -117,6 +119,28 @@ function Page({
         </div>
       </CountryContext.Provider>
     );
+  }
+
+  /** Either the magic code from the URL, or from localhost */
+  let finalUserMagicCode: string | undefined = userMagicCode ? userMagicCode : undefined;
+  // Only run on the client
+  if (typeof window !== 'undefined') {
+    const rsvps = getLocalStorageRSVPs();
+    const maybeEventToken = rsvps.rsvpedEvents.find(
+      event => event.long_event_code === event.long_event_code);
+    if(finalUserMagicCode === undefined && longEventCode !== undefined
+        && userMagicCode !== undefined && userMagicCode !== null) {
+      // We have a magic link
+      if(!maybeEventToken) {
+        // We have a magic code but it's not stored
+        const newRSVPs = addEventToLocalStorageRSVPs(rsvps, {long_event_code: longEventCode, guest_magic_code: userMagicCode});
+        setLocalStorageRSVPs(newRSVPs);
+      }
+    }
+    if(finalUserMagicCode === undefined && maybeEventToken) {
+      // Redirect to url with the user code
+      router.replace(`${router.asPath}/${maybeEventToken.guest_magic_code}`);
+    }
   }
 
   return (
@@ -204,7 +228,7 @@ function Page({
             <div>
               <button
                 onClick={() => {
-                  router.replace(`/rsvp/${eventCode}`);
+                  router.replace(`/rsvp/${longEventCode}`);
                 }}
               >
                 RSVP for this event!
@@ -294,10 +318,10 @@ export const getServerSideProps: GetServerSideProps = async (
   }
   const pool = createDatabasePool(context.req);
 
-  const eventCode = slug[0]; // The first part of the url is the event code
+  const longEventCode = slug[0]; // The first part of the url is the event code
   const userMagicCode = slug.length > 1 ? slug[1] : null; // The magic code for the user
 
-  const event = await getEventByCode(pool, eventCode);
+  const event = await getEventByCode(pool, longEventCode);
   if (event === null) {
     return {
       props: {
@@ -339,7 +363,7 @@ export const getServerSideProps: GetServerSideProps = async (
       userMagicCode,
       inEurope,
       weAreTheHost,
-      eventCode,
+      longEventCode,
     },
   };
 };
