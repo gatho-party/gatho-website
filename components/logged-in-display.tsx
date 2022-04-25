@@ -11,8 +11,8 @@ export function LoggedInDisplay({
     : "Sign in to create or edit an event";
   return (
     <div className="loggedInDisplay">
-      {authenticatedUser ? authenticatedUser : defaultMessage} {authenticatedUser ? ` | Only you can edit ` : ''} 
-      {" "}
+      {authenticatedUser ? authenticatedUser : defaultMessage}{" "}
+      {authenticatedUser ? ` | Only you can edit ` : ""}{" "}
       {authenticatedUser ? (
         <button onClick={() => signOut()}>Sign out</button>
       ) : (

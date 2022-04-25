@@ -1,5 +1,7 @@
 import { CreateEventPayload, CreateGuestPublicPayload, CreateGuestResponse, EventRSVPRecord, gathoApiUrl, LocalstorageInterface, Status, UpdateEventFieldPayload } from "./common-interfaces";
 import { CreateGuestPayload } from "../src/common-interfaces";
+import { NextRouter } from "next/router";
+
 
 export async function copyToClipboard(text: string) {
   const clipboard = navigator.clipboard;
@@ -181,12 +183,80 @@ export function getLocalStorageRSVPs(): LocalstorageInterface {
 export function setLocalStorageRSVPs(rsvps: LocalstorageInterface): void {
   localStorage.setItem('rsvps', JSON.stringify(rsvps));
 }
-export function addEventToLocalStorageRSVPs(rsvps: LocalstorageInterface, event: EventRSVPRecord): LocalstorageInterface {
-  const eventNotInLS = rsvps.rsvpedEvents.find(storedEvent => storedEvent.long_event_code === event.long_event_code) === undefined;
-  const newRSVPs = Object.assign({}, rsvps);
-
-  if (eventNotInLS) {
-    newRSVPs.rsvpedEvents.push(event)
-  }
+export function addEventToLocalStorageRSVPs(rsvps: LocalstorageInterface, event: EventRSVPRecord):
+  LocalstorageInterface {
+  const newRsvpedEvents = rsvps.rsvpedEvents.filter(storedEvent =>
+    storedEvent.long_event_code !== event.long_event_code)
+  const newRSVPs: LocalstorageInterface = {
+    rsvpedEvents: [...newRsvpedEvents]
+  };
+  newRSVPs.rsvpedEvents.push(event)
   return newRSVPs;
+}
+
+/**
+ * Store the magic code for the user if we "have" it (in the url),
+ * and it's not already stored.
+ * If we don't have it and it's stored then redirect (so we do "have" it)
+ * Side effects:
+ * - Redirects if user token in localstorage but not in url
+ */
+export function maybeStoreUserMagicCode({
+  longEventCode,
+  userMagicCodeURL: userMagicCode,
+  weAreTheHost,
+  router,
+}: {
+  /** Unique code for the event in the URL (not a number ID) */
+  longEventCode: string;
+  /** The long code identifying the user in the URL */
+  userMagicCodeURL: string | undefined | null;
+  weAreTheHost: boolean | undefined;
+  router: NextRouter;
+}): void {
+  // Only run on the client
+  if (typeof window === "undefined") {
+    return;
+  }
+  // Don't do anything if we're the host
+  if (weAreTheHost === true) {
+    return;
+  }
+  const rsvps = getLocalStorageRSVPs();
+  const maybeEventToken = rsvps.rsvpedEvents.find(
+    (event) => event.long_event_code === longEventCode
+  );
+
+  // Store the user code if we have it, and it's not stored
+  if (
+    userMagicCode !== undefined &&
+    userMagicCode !== null &&
+    !maybeEventToken
+  ) {
+    // We don't have the user code stored for this event
+    const newRSVPs = addEventToLocalStorageRSVPs(rsvps, {
+      long_event_code: longEventCode,
+      guest_magic_code: userMagicCode,
+    });
+    setLocalStorageRSVPs(newRSVPs);
+  }
+
+  // Redirect if we have the userid stored in local storage, but isn't in the url
+  if (maybeEventToken && !userMagicCode) {
+    // Redirect to url with the user code
+    router.replace(`${router.asPath}/${maybeEventToken.guest_magic_code}`);
+  }
+
+  // We have a stored user token but it's different to the one in local storage
+  if (maybeEventToken && userMagicCode && maybeEventToken.guest_magic_code !== userMagicCode) {
+    // Store the new one
+    // We don't have the user code stored for this event
+    const newRSVPs = addEventToLocalStorageRSVPs(rsvps, {
+      long_event_code: longEventCode,
+      guest_magic_code: userMagicCode,
+    });
+    setLocalStorageRSVPs(newRSVPs);
+
+  }
+
 }

@@ -7,7 +7,7 @@ import {
   getHostUserByEmail,
 } from "../../src/db";
 import Head from "next/head";
-import { EventSQL, GuestSQL} from "../../src/common-interfaces";
+import { EventSQL, GuestSQL } from "../../src/common-interfaces";
 import { getSession } from "next-auth/react";
 import Link from "next/link";
 import { statuses, statusMap } from "../../src/constants";
@@ -28,7 +28,7 @@ import { GuestsByStatus } from "../../components/guests-by-status";
 import { RSVPPrompt } from "../../components/rsvp-prompt";
 import { AddNewGuest } from "../../components/add-new-guest";
 import { useRouter } from "next/router";
-import { addEventToLocalStorageRSVPs, getLocalStorageRSVPs, setLocalStorageRSVPs } from "../../src/frontend-utils";
+import { maybeStoreUserMagicCode } from "../../src/frontend-utils";
 
 interface EventProps extends GeoProps {
   event?: EventSQL | null;
@@ -38,6 +38,7 @@ interface EventProps extends GeoProps {
   weAreTheHost?: boolean;
   /** Unique code for the event in the URL (not a number ID) */
   longEventCode?: string;
+  /** The long code identifying the user in the URL */
   userMagicCode?: string | null;
 }
 
@@ -83,7 +84,7 @@ function Page({
   weAreTheHost,
   email,
   longEventCode,
-  userMagicCode
+  userMagicCode,
 }: EventProps) {
   const router = useRouter();
   if (event === null || event === undefined) {
@@ -121,26 +122,13 @@ function Page({
     );
   }
 
-  /** Either the magic code from the URL, or from localhost */
-  let finalUserMagicCode: string | undefined = userMagicCode ? userMagicCode : undefined;
-  // Only run on the client
-  if (typeof window !== 'undefined') {
-    const rsvps = getLocalStorageRSVPs();
-    const maybeEventToken = rsvps.rsvpedEvents.find(
-      event => event.long_event_code === event.long_event_code);
-    if(finalUserMagicCode === undefined && longEventCode !== undefined
-        && userMagicCode !== undefined && userMagicCode !== null && weAreTheHost === false) {
-      // We have a magic link
-      if(!maybeEventToken) {
-        // We have a magic code but it's not stored
-        const newRSVPs = addEventToLocalStorageRSVPs(rsvps, {long_event_code: longEventCode, guest_magic_code: userMagicCode});
-        setLocalStorageRSVPs(newRSVPs);
-      }
-    }
-    if(finalUserMagicCode === undefined && maybeEventToken && weAreTheHost === false) {
-      // Redirect to url with the user code
-      router.replace(`${router.asPath}/${maybeEventToken.guest_magic_code}`);
-    }
+  if (longEventCode) {
+    maybeStoreUserMagicCode({
+      longEventCode,
+      userMagicCodeURL: userMagicCode,
+      weAreTheHost,
+      router,
+    });
   }
 
   return (
@@ -198,8 +186,6 @@ function Page({
             <h2>🕦 {event.time}</h2>
           )}
 
-
-
           {weAreTheHost ? (
             <div>
               <h2 className="event-description title">Event description:</h2>
@@ -238,42 +224,11 @@ function Page({
 
           {weAreTheHost ? (
             <div className="event-matrix-blurb">
-              <br>
-              </br>
+              <br></br>
               <p>
                 Optional: Link with your Matrix group chat - see the the{" "}
                 <Link href="/getting-started">getting started guide</Link>.
               </p>
-            </div>
-          ) : 
-          null
-          }
-          {event.id === 44 ? (
-            <div>
-
-            <p className="join-group-chat">
-              💬{" "}
-              <a
-                href={`https://matrix.to/#/${event.matrix_room_address}`}
-                target="_blank"
-                rel="noreferrer"
-              >
-                {" "}
-                Join the event group chat
-              </a>{" "}
-              in a Matrix-compatible app! (eg. Element)
-              <br></br>Message the host if you&apos;d like to join via Signal.
-            </p>
-              <div id="chat-container">
-                {/*
- // @ts-ignore */}
-                <matrix-live homeserver="https://matrix.jakecopp.chat" room={event.matrix_room_address} initial-load="60" ></matrix-live>
-              </div>
-              
-              {/* eslint-disable */ }
-              <script src="https://code.jquery.com/jquery-3.1.1.min.js" integrity="sha256-hVVnYaiADRTO2PzUGmuLJr8BLUSjGIZsDYGmIJLv2b8=" crossOrigin="anonymous" ></script>
-              <script src="https://live.hello-matrix.net/matrix-live-min.js"></script>
-              {/* eslint-enable */ }
             </div>
           ) : null}
 
