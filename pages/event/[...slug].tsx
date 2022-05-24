@@ -209,6 +209,23 @@ function Page({
             <RSVPPrompt viewingGuest={viewingGuest} />
           ) : null}
 
+        {(viewingGuest !== undefined && viewingGuest !== null) &&
+          weAreTheHost !== true  && event.matrix_room_address.length !== 0 ? (
+            <p className="join-group-chat">
+              💬{" "}
+              <a
+                href={`https://matrix.to/#/${event.matrix_room_address}`}
+                target="_blank"
+                rel="noreferrer"
+              >
+                {" "}
+                Join the event group chat
+              </a>{" "}
+              in a Matrix-compatible app! (eg. Element)
+            </p>
+          ) : null}
+
+
           {(viewingGuest === undefined || viewingGuest === null) &&
           weAreTheHost !== true ? (
             <div>
