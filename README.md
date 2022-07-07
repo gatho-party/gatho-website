@@ -43,7 +43,7 @@ Gatho uses Postgres. It gets the database location via the database URLs in the 
 
 Copy `example-.env` to `.env` as an example file to get started.
 
-Make sure to populate all the example values. `DATABASE_URL_AU` and `DATABASE_URL_EU` must currently
+Make sure to populate all the example values. `DATABASE_URL` and `DATABASE_URL_EU` must currently
 be populated, but they may be the same DB connection string. If you get an error like
 `The provided database string is invalid.`, your connection string may be missing details (see
 [issue #8](https://github.com/gatho-party/gatho-website/issues/8)).
