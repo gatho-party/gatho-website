@@ -6,6 +6,9 @@
   "author": "Jake Coppinger",
   "homepage": "https://gatho.party",
   "license": "AGPL-3.0",
+  "engines" : { 
+    "node" : "16.13.0"
+  },
   "scripts": {
     "dev": "next dev",
     "build": "npm run test && npm run typecheck && npx prisma generate && next build && cp -r node_modules/.prisma .",
