@@ -1,4 +1,4 @@
-import { CreateEventPayload, CreateGuestPublicPayload, CreateGuestResponse, EventRSVPRecord, gathoApiUrl, LocalstorageInterface, Status, UpdateEventFieldPayload } from "./common-interfaces";
+import { CreateEventPayload, CreateGuestPublicPayload, CreateGuestResponse, EventRSVPRecord, fetchGathoApiUrl, LocalstorageInterface, Status, UpdateEventFieldPayload } from "./common-interfaces";
 import { CreateGuestPayload } from "../src/common-interfaces";
 import { NextRouter } from "next/router";
 
@@ -173,7 +173,7 @@ export async function addGuestPublic({
 }
 
 export function generateGuestUrl({ eventCode, guestMagicCode }: { eventCode: string, guestMagicCode: string }) {
-  return `${gathoApiUrl}/event/${eventCode}/${guestMagicCode}`;
+  return `${fetchGathoApiUrl()}/event/${eventCode}/${guestMagicCode}`;
 }
 
 export function getLocalStorageRSVPs(): LocalstorageInterface {

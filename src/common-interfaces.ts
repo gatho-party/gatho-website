@@ -1,9 +1,7 @@
-export const gathoApiUrl = process.env.NODE_ENV === 'production'
+export const fetchGathoApiUrl = () => process.env.NODE_ENV === 'production'
   ? "https://gatho.party"
   : "http://localhost:3000";
 
-const nodeEnv = process.env.NODE_ENV;
-console.log({gathoApiUrl, nodeEnv});
 
 export type Status = 'going' | 'maybe' | 'notgoing' | 'invited';
 
