@@ -144,7 +144,7 @@ export function getConnectionString(country: string): string {
   if (isCountryInEurope(country)) {
     return process.env.DATABASE_URL_EU as string;
   }
-  return process.env.DATABASE_URL_AU as string;
+  return process.env.DATABASE_URL as string;
 }
 
 export function createDatabasePool(req: IncomingMessage): Pool {

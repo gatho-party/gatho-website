@@ -5,16 +5,6 @@ CREATE TABLE users (
 	email TEXT NOT NULL
 );
 
-CREATE TABLE guests (
-	id SERIAL PRIMARY KEY,
-	event INT NOT NULL,
-	displayname TEXT,
-	matrix_username TEXT,
-	magic_code TEXT NOT NULL, -- The code required to "auth" as the user
-	status TEXT NOT NULL,
-	FOREIGN KEY (event) REFERENCES events(id)
-);
-
 CREATE TABLE events (
 	id SERIAL PRIMARY KEY,
 	host INT NOT NULL,
@@ -29,6 +19,16 @@ CREATE TABLE events (
 	matrix_room_address TEXT,
 	matrix_rsvp_message TEXT,
 	FOREIGN KEY (host) REFERENCES users(id)
+);
+
+CREATE TABLE guests (
+	id SERIAL PRIMARY KEY,
+	event INT NOT NULL,
+	displayname TEXT,
+	matrix_username TEXT,
+	magic_code TEXT NOT NULL, -- The code required to "auth" as the user
+	status TEXT NOT NULL,
+	FOREIGN KEY (event) REFERENCES events(id)
 );
 
 
