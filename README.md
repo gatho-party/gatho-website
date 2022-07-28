@@ -16,18 +16,13 @@ Gatho uses Next.js in Typescript (React on the frontend), and Postgres as a data
 The matrix bot uses [matrix-bot-sdk](https://github.com/turt2live/matrix-bot-sdk) and sends RSVPs or
 new events to the Gatho backend server.
 
-# Infrastructure
+# Gatho.party deployment
 
-Gatho.party is multi region - currently I host EC2 instances in Sydney and London, each with their
-own database. It should work anywhere you can run a Next.js Node app.
-
-The Matrix bot is hosted on another VPS which hosts a Synapse instance.
-
-# Security
+Gatho.party is single region - I don't have the resources to also host it on a dedicated EU server
+unfortunately. It should work anywhere you can run a Next.js Node app.
 
 - Gatho uses NextAuth.js for authentication so no passwords are required to be stored.
-- It's is GDPR compliant with a dedicated EU server & database.
-- It's hosted on AWS infrastrcture with strong access controls.
+- It's hosted on AWS infrastrcture.
 - API calls are checked for session token and that the requester owns the given event.
 - Database calls use SQL parameters.
 - No third party cookies are set and no third party JavaScript is run.
@@ -43,10 +38,7 @@ Gatho uses Postgres. It gets the database location via the database URLs in the 
 
 Copy `example-.env` to `.env` as an example file to get started.
 
-Make sure to populate all the example values. `DATABASE_URL` and `DATABASE_URL_EU` must currently
-be populated, but they may be the same DB connection string. If you get an error like
-`The provided database string is invalid.`, your connection string may be missing details (see
-[issue #8](https://github.com/gatho-party/gatho-website/issues/8)).
+Make sure to populate all the example values.
 
 See [docs/installing-postgres.md](docs/installing-postgres.md) for installation instructions if
 you'd like to setup a local server.

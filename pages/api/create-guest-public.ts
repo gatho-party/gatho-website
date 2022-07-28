@@ -11,7 +11,7 @@ export default async function handler(
     return;
   }
 
-  const pool = createDatabasePool(req);
+  const pool = createDatabasePool();
 
   const { displayname, status, eventCode } = JSON.parse(req.body) as CreateGuestPublicPayload;
   if (displayname === undefined) {

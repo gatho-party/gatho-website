@@ -2,7 +2,7 @@ import NextAuth from "next-auth"
 import EmailProvider from "next-auth/providers/email"
 import { PrismaAdapter } from '@next-auth/prisma-adapter';
 import type { NextApiRequest, NextApiResponse } from 'next'
-import { getConnectionString, getCountryCode } from "../../../src/backend-utils";
+import { getConnectionString} from "../../../src/backend-utils";
 import { PrismaClient } from "@prisma/client";
 
 let prismaClient: PrismaClient | undefined = undefined;
@@ -11,9 +11,7 @@ export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse
 ) {
-  const countryCode = getCountryCode(req);
-  const connectionString = getConnectionString(countryCode);
-
+  const connectionString = getConnectionString();
 
   if (prismaClient === undefined) {
     console.log("Prismaclient is undef, about to connect:")

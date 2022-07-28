@@ -19,11 +19,8 @@ import { Footer } from "../../components/footer";
 import { DefaultHead } from "../../components/default-head";
 import {
   createDatabasePool,
-  getCountryCode,
-  isCountryInEurope,
 } from "../../src/backend-utils";
 import { GeoProps } from "../../src/interfaces";
-import { CountryContext } from "../../src/context";
 import { GuestsByStatus } from "../../components/guests-by-status";
 import { RSVPPrompt } from "../../components/rsvp-prompt";
 import { AddNewGuest } from "../../components/add-new-guest";
@@ -79,8 +76,6 @@ function Page({
   event,
   guests,
   viewingGuest,
-  countryCode,
-  inEurope,
   weAreTheHost,
   email,
   longEventCode,
@@ -89,7 +84,6 @@ function Page({
   const router = useRouter();
   if (event === null || event === undefined) {
     return (
-      <CountryContext.Provider value={{ countryCode, inEurope }}>
         <div className={`${styles.container} event`}>
           <DefaultHead />
           <Head>
@@ -118,7 +112,6 @@ function Page({
           </main>
           <Footer />
         </div>
-      </CountryContext.Provider>
     );
   }
 
@@ -132,7 +125,6 @@ function Page({
   }
 
   return (
-    <CountryContext.Provider value={{ countryCode, inEurope }}>
       <div className={`${styles.container} event`}>
         <DefaultHead />
         <Head>
@@ -242,7 +234,6 @@ function Page({
         </main>
         <Footer />
       </div>
-    </CountryContext.Provider>
   );
 }
 
@@ -250,15 +241,10 @@ export const getServerSideProps: GetServerSideProps = async (
   context
 ): Promise<GetServerSidePropsResult<EventProps>> => {
   const session = await getSession(context);
-  const { req } = context;
-  const countryCode = getCountryCode(req);
-  const inEurope = isCountryInEurope(countryCode);
 
   if (context.params === undefined || context.params.slug === undefined) {
     return {
       props: {
-        countryCode,
-        inEurope,
       },
     };
   }
@@ -266,12 +252,10 @@ export const getServerSideProps: GetServerSideProps = async (
   if (slug.length === 0) {
     return {
       props: {
-        countryCode,
-        inEurope,
       },
     };
   }
-  const pool = createDatabasePool(context.req);
+  const pool = createDatabasePool();
 
   const longEventCode = slug[0]; // The first part of the url is the event code
   const userMagicCode = slug.length > 1 ? slug[1] : null; // The magic code for the user
@@ -280,8 +264,6 @@ export const getServerSideProps: GetServerSideProps = async (
   if (event === null) {
     return {
       props: {
-        countryCode,
-        inEurope,
       },
     };
   }
@@ -296,8 +278,6 @@ export const getServerSideProps: GetServerSideProps = async (
     console.error("Why is responses null?!");
     return {
       props: {
-        countryCode,
-        inEurope,
       },
     };
   }
@@ -314,9 +294,7 @@ export const getServerSideProps: GetServerSideProps = async (
       guests,
       viewingGuest,
       email: email ? email : null,
-      countryCode,
       userMagicCode,
-      inEurope,
       weAreTheHost,
       longEventCode,
     },

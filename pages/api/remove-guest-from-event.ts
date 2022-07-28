@@ -18,7 +18,7 @@ export default async function handler(
     return;
   }
 
-  const pool = createDatabasePool(req);
+  const pool = createDatabasePool();
 
   const { guestId, eventId } = JSON.parse(req.body) as RemoveGuestPayload;
   if (guestId === undefined || eventId === undefined) {

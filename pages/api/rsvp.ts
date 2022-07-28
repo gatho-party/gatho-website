@@ -11,7 +11,7 @@ export default async function handler(
   if (isNotPost(req, res)) {
     return;
   }
-  const pool = createDatabasePool(req);
+  const pool = createDatabasePool();
   const { guest_magic_code, status } = JSON.parse(req.body) as RSVPPayload;
   let result;
   try {

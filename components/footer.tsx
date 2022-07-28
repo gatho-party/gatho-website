@@ -1,6 +1,5 @@
 import styles from "../styles/Home.module.css";
 import Link from "next/link";
-import { CountryContext, CountryContextType } from "../src/context";
 
 export function Footer() {
   return (
@@ -22,7 +21,7 @@ export function Footer() {
           in Sydney, Australia.
         </h5>
         <p>
-          Get involved! Gatho is open-source (AGPL-3.0) on{" "}
+          Gatho is open-source (AGPL-3.0) on{" "}
           <a
             target="_blank"
             rel="noopener noreferrer"
@@ -34,9 +33,7 @@ export function Footer() {
           <a href="https://matrix.to/#/#gatho-events:matrix.org">
             #gatho-events:matrix.org
           </a>
-          , follow{" "}
-          <a href="https://instagram.com/gatho_events/">Gatho on Instagram</a>,
-          or email me at <a href="mailto:jake@gatho.party">jake@gatho.party</a>.
+          , or email me at <a href="mailto:jake@gatho.party">jake@gatho.party</a>.
         </p>
         <p>Feedback is much appreciated!</p>
         <p>
@@ -45,19 +42,7 @@ export function Footer() {
           {"   -  "}
           <Link href="/cookies">Cookies</Link>
           {"   -  "}
-          <CountryContext.Consumer>
-            {({ countryCode, inEurope }: CountryContextType) => {
-              if (countryCode === undefined) {
-                return null;
-              }
-              const datacentre = inEurope ? "European" : "Australian";
-              return (
-                <span>
-                  Using {datacentre} datacentre (your region is {countryCode}).
-                </span>
-              );
-            }}
-          </CountryContext.Consumer>
+          <span>Gatho is hosted in Australia.</span>
         </p>
       </div>
     </footer>

@@ -17,7 +17,7 @@ export default async function handler(
     return;
   }
 
-  const pool = createDatabasePool(req);
+  const pool = createDatabasePool();
   const payload = JSON.parse(req.body) as UpdateEventFieldPayload;
 
   const { eventId, field, value } = payload;

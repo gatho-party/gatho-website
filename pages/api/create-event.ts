@@ -22,7 +22,7 @@ export default async function handler(
     ...payload,
   }
 
-  const pool = createDatabasePool(req);
+  const pool = createDatabasePool();
   const result = await createNewEvent(pool, newEventPayload);
 
   if (result === null) {

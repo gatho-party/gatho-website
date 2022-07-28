@@ -29,7 +29,6 @@ function Home({}: GettingStartedProps) {
 		<p>TLDR:</p>
 		<ul>
 		<li>Gatho is a side project by Jake Coppinger</li>
-		<li>It&apos;s is GDPR compliant with a dedicated EU server & database</li>
 		<li>It only uses one first party cookie strictly for authentication</li>
 		<li>It uses <a href="https://plausible.io">Plausible.io</a> for analytics which does not set cookies or track personal info</li>
 		<li>Your personal data is not sold</li>

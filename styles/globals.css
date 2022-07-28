@@ -431,12 +431,6 @@ img.mockup {
   #signin-landing button {
     margin: auto;
   }
-
-  .signin-notice {
-    opacity: 0;
-    transition: opacity 0.3s;
-    text-align: center;
-  }
 }
 
 .event-matrix-blurb {
@@ -541,13 +535,6 @@ button:active {
 
   margin: 0 0 0.75rem;
   padding: 0.75rem 1rem;
-}
-
-.signin-notice {
-  opacity: 0;
-  transition: opacity 0.3s;
-  text-align: left;
-  display: block;
 }
 
 .matrix-live-main {

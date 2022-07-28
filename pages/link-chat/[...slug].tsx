@@ -18,10 +18,7 @@ import { signIn } from "next-auth/react";
 import { DefaultHead } from "../../components/default-head";
 import {
   createDatabasePool,
-  getCountryCode,
-  isCountryInEurope,
 } from "../../src/backend-utils";
-import { CountryContext } from "../../src/context";
 import { GeoProps } from "../../src/interfaces";
 
 function Page({
@@ -29,8 +26,6 @@ function Page({
   events,
   linkedEvent,
   roomId,
-  countryCode,
-  inEurope,
 }: LinkProps) {
   const { data: session } = useSession();
   const router = useRouter();
@@ -39,7 +34,6 @@ function Page({
   };
 
   return (
-    <CountryContext.Provider value={{ countryCode, inEurope }}>
       <div className={`${styles.container} event`}>
         <DefaultHead />
         <Head>
@@ -151,7 +145,6 @@ function Page({
         </main>
         <Footer />
       </div>
-    </CountryContext.Provider>
   );
 }
 interface LinkProps extends GeoProps {
@@ -172,9 +165,7 @@ export const getServerSideProps: GetServerSideProps = async (
     return { props: { mode: "link-invalid" } };
   }
 
-  const countryCode = getCountryCode(context.req);
-  const inEurope = isCountryInEurope(countryCode);
-  const pool = createDatabasePool(context.req);
+  const pool = createDatabasePool();
   const session = await getSession(context);
   if (
     session === undefined ||
@@ -182,13 +173,13 @@ export const getServerSideProps: GetServerSideProps = async (
     session.user.email === null
   ) {
     return {
-      props: { mode: "display_sign_in_prompt", countryCode, inEurope },
+      props: { mode: "display_sign_in_prompt" },
     };
   }
 
   const slug = context.params.slug as string[];
   if (slug.length === 0) {
-    return { props: { mode: "link-invalid", countryCode, inEurope } };
+    return { props: { mode: "link-invalid" } };
   }
 
   const roomId = slug[0]; // The first part of the url is the event code
@@ -200,8 +191,6 @@ export const getServerSideProps: GetServerSideProps = async (
         mode: "event_already_linked",
         linkedEvent: maybeExistingEvent,
         roomId,
-        countryCode,
-        inEurope,
       },
     };
   }
@@ -214,8 +203,6 @@ export const getServerSideProps: GetServerSideProps = async (
       events,
       mode: "choose-event-or-create-new",
       roomId,
-      countryCode,
-      inEurope,
     },
   };
 };
