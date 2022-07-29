@@ -53,7 +53,7 @@ function Page({ event,  email }: EventProps) {
           <p>
             If you are in the correct region and you are seeing this message in
             error, please contact Jake at{" "}
-            <a href="mailto:jake@gatho.party">jake@gatho.party</a>.
+            <a href="mailto:jake@jakecoppinger.com">jake@jakecoppinger.com</a>.
           </p>
           <p>Your region is displayed at the bottom of the page</p>
         </main>

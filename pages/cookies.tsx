@@ -31,7 +31,7 @@ function Home({}: GettingStartedProps) {
 		<li>Gatho is a side project by Jake Coppinger</li>
 		<li>It only uses one first party cookie strictly for authentication</li>
 		<li>It uses <a href="https://plausible.io">Plausible.io</a> for analytics which does not set cookies or track personal info</li>
-		<li>Please drop me an email at <a href="mailto:jake@gatho.party">jake@gatho.party</a> with any questions or concerns</li>
+		<li>Please drop me an email at <a href="mailto:jake@jakecoppinger.com">jake@jakecoppinger.com</a> with any questions or concerns</li>
 		</ul>
 
           <div

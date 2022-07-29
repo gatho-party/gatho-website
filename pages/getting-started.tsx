@@ -75,9 +75,9 @@ function Home({}: GettingStartedProps) {
             <a
               target="_blank"
               rel="noopener noreferrer"
-              href="https://matrix.to/#/@bot:matrix.gatho.party"
+              href="https://matrix.to/#/@gatho-bot:matrix.org"
             >
-              @bot:matrix.gatho.party
+              @gatho-bot:matrix.org
             </a>
             ) to your Matrix room it will send a message with a
             &quot;magic&quot; link to associate the chat with your existing

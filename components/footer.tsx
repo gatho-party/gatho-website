@@ -33,7 +33,7 @@ export function Footer() {
           <a href="https://matrix.to/#/#gatho-events:matrix.org">
             #gatho-events:matrix.org
           </a>
-          , or email me at <a href="mailto:jake@gatho.party">jake@gatho.party</a>.
+          , or email me at <a href="mailto:jake@jakecoppinger.com">jake@jakecoppinger.com</a>.
         </p>
         <p>Feedback is much appreciated!</p>
         <p>

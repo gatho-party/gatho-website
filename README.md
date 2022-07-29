@@ -7,7 +7,7 @@ Gatho is an event planning app which works great standalone, but can integrate w
 on Matrix. It is a side project by Jake Coppinger ([jakecoppinger.com](https://jakecoppinger.com)).
 
 Join the community on Matrix at
-[#gatho-events:matrix.gatho.party](https://matrix.to/#/#gatho-events:matrix.gatho.party).
+[#gatho-events:matrix.org](https://matrix.to/#/#gatho-events:matrix.org).
 
 # Architecture
 
@@ -28,7 +28,7 @@ unfortunately. It should work anywhere you can run a Next.js Node app.
 - No third party cookies are set and no third party JavaScript is run.
 - Gatho uses Plausible.io for analytics which does not set cookies or track personal info.
 
-If you find a security issue please contact [jake@gatho.party](mailto:jake@gatho.party) promptly -
+If you find a security issue please contact [jake@jakecoppinger.com](mailto:jake@jakecoppinger.com) promptly -
 you will be paid a substantial bug bounty.
 
 # Get started building
@@ -88,5 +88,5 @@ SELECT SETVAL((SELECT PG_GET_SERIAL_SEQUENCE('"events"', 'id')), (SELECT (MAX("i
 # Author
 Jake Coppinger ([jakecoppinger.com](https://jakecoppinger.com)).
 
-Contact at [jake@gatho.party](mailto:jake@gatho.party) for a Gatho related subject,
+Contact at [jake@jakecoppinger.com](mailto:jake@jakecoppinger.com) for a Gatho related subject,
 or [jake@jakecoppinger.com](mailto:jake@jakecoppinger.com) for anything else.
