@@ -12,20 +12,19 @@ import { getSession } from "next-auth/react";
 import Link from "next/link";
 import { statuses, statusMap } from "../../src/constants";
 import { Status } from "../../src/common-interfaces";
-import { EditableEventHeading } from "../../components/editable-event-heading";
+import { EditableTextfield } from "../../components/editable-event-heading";
 import { GathoLogo } from "../../components/gatho-logo";
 import { LoggedInDisplay } from "../../components/logged-in-display";
 import { Footer } from "../../components/footer";
 import { DefaultHead } from "../../components/default-head";
-import {
-  createDatabasePool,
-} from "../../src/backend-utils";
+import { createDatabasePool } from "../../src/backend-utils";
 import { GeoProps } from "../../src/interfaces";
 import { GuestsByStatus } from "../../components/guests-by-status";
 import { RSVPPrompt } from "../../components/rsvp-prompt";
 import { AddNewGuest } from "../../components/add-new-guest";
 import { useRouter } from "next/router";
 import { maybeStoreUserMagicCode } from "../../src/frontend-utils";
+import Linkify from "linkify-react";
 
 interface EventProps extends GeoProps {
   event?: EventSQL | null;
@@ -84,34 +83,34 @@ function Page({
   const router = useRouter();
   if (event === null || event === undefined) {
     return (
-        <div className={`${styles.container} event`}>
-          <DefaultHead />
-          <Head>
-            <title>Event not found - Gatho</title>
-          </Head>
+      <div className={`${styles.container} event`}>
+        <DefaultHead />
+        <Head>
+          <title>Event not found - Gatho</title>
+        </Head>
 
-          <main className={styles.main}>
-            <LoggedInDisplay authenticatedUser={email} />
-            <Link href="/" passHref>
-              <a>
-                <GathoLogo className={"smallEventLogo"} />
-              </a>
-            </Link>
-            <h1>404: event not found</h1>
-            <p>
-              Is your host in a different part of the world to where you are?
-              Events created in Europe can only be accessed from there, likewise
-              for outside the EU.
-            </p>
-            <p>
-              If you are in the correct region and you are seeing this message
-              in error, please contact Jake at{" "}
-              <a href="mailto:jake@jakecoppinger.com">jake@jakecoppinger.com</a>.
-            </p>
-            <p>Your region is displayed at the bottom of the page</p>
-          </main>
-          <Footer />
-        </div>
+        <main className={styles.main}>
+          <LoggedInDisplay authenticatedUser={email} />
+          <Link href="/" passHref>
+            <a>
+              <GathoLogo className={"smallEventLogo"} />
+            </a>
+          </Link>
+          <h1>404: event not found</h1>
+          <p>
+            Is your host in a different part of the world to where you are?
+            Events created in Europe can only be accessed from there, likewise
+            for outside the EU.
+          </p>
+          <p>
+            If you are in the correct region and you are seeing this message in
+            error, please contact Jake at{" "}
+            <a href="mailto:jake@jakecoppinger.com">jake@jakecoppinger.com</a>.
+          </p>
+          <p>Your region is displayed at the bottom of the page</p>
+        </main>
+        <Footer />
+      </div>
     );
   }
 
@@ -125,115 +124,124 @@ function Page({
   }
 
   return (
-      <div className={`${styles.container} event`}>
-        <DefaultHead />
-        <Head>
-          <title>{event.name} - Gatho</title>
-          <meta
-            name="description"
-            content={`See who's going, and the time and place of "${event.name}"`}
+    <div className={`${styles.container} event`}>
+      <DefaultHead />
+      <Head>
+        <title>{event.name} - Gatho</title>
+        <meta
+          name="description"
+          content={`See who's going, and the time and place of "${event.name}"`}
+        />
+      </Head>
+
+      <main className={styles.main}>
+        <LoggedInDisplay authenticatedUser={email} />
+        <Link href="/" passHref>
+          <a>
+            <GathoLogo className={"smallEventLogo"} />
+          </a>
+        </Link>
+
+        {weAreTheHost ? (
+          <EditableTextfield
+            headingText={event.name}
+            className={"event-name"}
+            event={event}
+            fieldName={"name"}
+            placeholder={"Event name"}
           />
-        </Head>
+        ) : (
+          <h2 className={"event-name editable-signed-in"}>{event.name}</h2>
+        )}
 
-        <main className={styles.main}>
-          <LoggedInDisplay authenticatedUser={email} />
-          <Link href="/" passHref>
-            <a>
-              <GathoLogo className={"smallEventLogo"} />
-            </a>
-          </Link>
+        {weAreTheHost ? (
+          <EditableTextfield
+            headingText={event.place}
+            prefix={"📍 "}
+            event={event}
+            fieldName={"place"}
+            placeholder={"Event location"}
+          />
+        ) : (
+          <h2 className={"editable-signed-in"}>📍 {event.place}</h2>
+        )}
+        {weAreTheHost ? (
+          <EditableTextfield
+            headingText={event.time}
+            prefix={"🕦 "}
+            event={event}
+            fieldName={"time"}
+            placeholder={"Event time"}
+          />
+        ) : (
+          <h2>🕦 {event.time}</h2>
+        )}
 
-          {weAreTheHost ? (
-            <EditableEventHeading
-              headingText={event.name}
-              className={"event-name"}
+        {weAreTheHost ? (
+          <div>
+            <h2 className="event-description title">Event description:</h2>
+            <EditableTextfield
+              className={"whitespace event-description"}
+              headingText={event.description}
               event={event}
-              fieldName={"name"}
-              placeholder={"Event name"}
+              fieldName={"description"}
+              allowNewlines={true}
+              placeholder={"Event description"}
+              linkify={true}
             />
-          ) : (
-            <h2 className={"event-name editable-signed-in"}>{event.name}</h2>
-          )}
 
-          {weAreTheHost ? (
-            <EditableEventHeading
-              headingText={event.place}
-              prefix={"📍 "}
-              event={event}
-              fieldName={"place"}
-              placeholder={"Event location"}
-            />
-          ) : (
-            <h2 className={"editable-signed-in"}>📍 {event.place}</h2>
-          )}
-          {weAreTheHost ? (
-            <EditableEventHeading
-              headingText={event.time}
-              prefix={"🕦 "}
-              event={event}
-              fieldName={"time"}
-              placeholder={"Event time"}
-            />
-          ) : (
-            <h2>🕦 {event.time}</h2>
-          )}
-
-          {weAreTheHost ? (
-            <div>
-              <h2 className="event-description title">Event description:</h2>
-              <EditableEventHeading
-                className={"whitespace event-description"}
-                headingText={event.description}
-                event={event}
-                fieldName={"description"}
-                allowNewlines={true}
-                placeholder={"Event description"}
-              />
-            </div>
-          ) : (
-            <h2 className={"event-description editable-signed-in"}>
+          </div>
+        ) : (
+          <h2 className={"event-description editable-signed-in"}>
+            <Linkify
+              as="p"
+              options={{
+                target: "_blank", // Open all links in new tab
+              }}
+            >
               {event.description}
-            </h2>
-          )}
+            </Linkify>
+          </h2>
+        )}
 
-          {weAreTheHost ? <AddNewGuest event={event} /> : null}
-          {viewingGuest !== null && viewingGuest !== undefined ? (
-            <RSVPPrompt viewingGuest={viewingGuest} />
-          ) : null}
+        {weAreTheHost ? <AddNewGuest event={event} /> : null}
+        {viewingGuest !== null && viewingGuest !== undefined ? (
+          <RSVPPrompt viewingGuest={viewingGuest} />
+        ) : null}
 
-          {(viewingGuest === undefined || viewingGuest === null) &&
-          weAreTheHost !== true ? (
-            <div>
-              <button
-                onClick={() => {
-                  router.replace(`/rsvp/${longEventCode}`);
-                }}
-              >
-                RSVP for this event!
-              </button>
-            </div>
-          ) : null}
+        {(viewingGuest === undefined || viewingGuest === null) &&
+        weAreTheHost !== true ? (
+          <div>
+            <button
+              onClick={() => {
+                router.replace(`/rsvp/${longEventCode}`);
+              }}
+            >
+              RSVP for this event!
+            </button>
+          </div>
+        ) : null}
 
-          {weAreTheHost ? (
-            <div className="event-matrix-blurb">
-              <br></br>
-              <p>
-                Optional: Link with your Matrix group chat - see the the{" "}
-                <Link href="/getting-started">getting started guide</Link>.
-              </p>
-            </div>
-          ) : null}
+        {weAreTheHost ? (
+          <div className="event-matrix-blurb">
+            <br></br>
+            <p>
+              Optional: Link with your Matrix group chat - see the the{" "}
+              <Link href="/getting-started">getting started guide</Link>.
+            </p>
+          </div>
+        ) : null}
 
-          {guests ? (
-            <ResponsesView
-              areWeTheHost={weAreTheHost === true}
-              event={event}
-              guests={guests}
-            />
-          ) : null}
-        </main>
-        <Footer />
-      </div>
+        {guests ? (
+          <ResponsesView
+            areWeTheHost={weAreTheHost === true}
+            event={event}
+            guests={guests}
+          />
+        ) : null}
+      </main>
+      <Footer />
+    </div>
   );
 }
 
@@ -244,15 +252,13 @@ export const getServerSideProps: GetServerSideProps = async (
 
   if (context.params === undefined || context.params.slug === undefined) {
     return {
-      props: {
-      },
+      props: {},
     };
   }
   const slug = context.params.slug as string[];
   if (slug.length === 0) {
     return {
-      props: {
-      },
+      props: {},
     };
   }
   const pool = createDatabasePool();
@@ -263,8 +269,7 @@ export const getServerSideProps: GetServerSideProps = async (
   const event = await getEventByCode(pool, longEventCode);
   if (event === null) {
     return {
-      props: {
-      },
+      props: {},
     };
   }
   // Pass data to the page via props
@@ -277,8 +282,7 @@ export const getServerSideProps: GetServerSideProps = async (
   if (guests === null) {
     console.error("Why is responses null?!");
     return {
-      props: {
-      },
+      props: {},
     };
   }
 
