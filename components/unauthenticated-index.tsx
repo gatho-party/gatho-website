@@ -2,7 +2,6 @@ import styles from "../styles/Home.module.css";
 import { UnauthenticatedIndexProps } from "../src/interfaces";
 import { Footer } from "./footer";
 import Link from "next/link";
-import { SigninSignupButton } from "./signin-signup-button";
 import { SigninDialog } from "./signin-dialog";
 
 export function UnauthenticatedIndex({ csrfToken }: UnauthenticatedIndexProps) {
@@ -80,7 +79,6 @@ export function UnauthenticatedIndex({ csrfToken }: UnauthenticatedIndexProps) {
               </Link>
             </h3>
             <br />
-            <SigninSignupButton />
           </div>
           <div className="after-landing"></div>
         </main>

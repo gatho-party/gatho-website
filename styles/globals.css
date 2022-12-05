@@ -519,8 +519,8 @@ a.button, select {
   text-align: center;
   position: relative;
 }
-button:hover,
-a.button:hover {
+button:enabled:hover,
+a.button:enabled:hover {
   border-color: #7a7a7a;
 }
 a.button:active,

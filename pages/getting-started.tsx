@@ -5,7 +5,6 @@ import { GathoLogo } from "../components/gatho-logo";
 import styles from "../styles/Home.module.css";
 import { Footer } from "../components/footer";
 import { DefaultHead } from "../components/default-head";
-import { SigninSignupButton } from "../components/signin-signup-button";
 import { useSession } from "next-auth/react";
 
 function Home({}: GettingStartedProps) {
@@ -99,7 +98,6 @@ function Home({}: GettingStartedProps) {
               Github
             </a>
           </p>
-          <SigninSignupButton />
         </div>
         <Footer />
       </div>
