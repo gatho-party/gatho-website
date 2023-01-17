@@ -108,6 +108,9 @@ function Page({ event,  email }: EventProps) {
             }
 
             const displayname = getBySelector<HTMLInputElement>("#name").value;
+            if(displayname === undefined || displayname.trim() === '') {
+              return;
+            }
             console.log({ status, displayname });
 
             const maybeGuestCode = await addGuestPublic({
