@@ -1,4 +1,4 @@
-Gatho Events ([gatho.party](https://gatho.party))
+Gatho Events
 ================================================
 
 > Invite friends to your event with a one-click RSVP link - no matter which chat/social app they use!
@@ -6,8 +6,7 @@ Gatho Events ([gatho.party](https://gatho.party))
 Gatho is an event planning app which works great standalone, but can integrate with a group chat
 on Matrix. It is a side project by Jake Coppinger ([jakecoppinger.com](https://jakecoppinger.com)).
 
-Join the community on Matrix at
-[#gatho-events:matrix.org](https://matrix.to/#/#gatho-events:matrix.org).
+Jake previously hosted it at gatho.party but has since shut down that instance. Feel free to spin up your own using the below instructions.
 
 # Architecture
 
@@ -16,20 +15,14 @@ Gatho uses Next.js in Typescript (React on the frontend), and Postgres as a data
 The matrix bot uses [matrix-bot-sdk](https://github.com/turt2live/matrix-bot-sdk) and sends RSVPs or
 new events to the Gatho backend server.
 
-# Gatho.party deployment
+# Architecture
 
-Gatho.party is single region - I don't have the resources to also host it on a dedicated EU server
-unfortunately. It should work anywhere you can run a Next.js Node app.
+It should work anywhere you can run a Next.js Node app.
 
 - Gatho uses NextAuth.js for authentication so no passwords are required to be stored.
-- It's hosted on AWS infrastrcture.
 - API calls are checked for session token and that the requester owns the given event.
 - Database calls use SQL parameters.
 - No third party cookies are set and no third party JavaScript is run.
-- Gatho uses Plausible.io for analytics which does not set cookies or track personal info.
-
-If you find a security issue please contact [jake@jakecoppinger.com](mailto:jake@jakecoppinger.com) promptly -
-you will be paid a substantial bug bounty.
 
 # Get started building
 ## Setting up database
@@ -56,6 +49,8 @@ Run `./scripts/create-database-tables-local.sh`
 
 Gatho currently uses NextAuth.js for authentication. This reqires using a NextAuth database
 adapter - I haven't written my own at this stage so I used Prisma. This comes with some quirks.
+
+Update: A vanilla postgres adapter has been merged - this could be used to remove Prisma usage: https://github.com/nextauthjs/next-auth/pull/4933#event-10444245176
 
 ### Error creating shadow database
 
@@ -85,8 +80,5 @@ SELECT SETVAL((SELECT PG_GET_SERIAL_SEQUENCE('"events"', 'id')), (SELECT (MAX("i
 
 [GNU Affero General Public License v3.0](https://choosealicense.com/licenses/agpl-3.0/). See LICENSE.
 
-# Author
+# Original author
 Jake Coppinger ([jakecoppinger.com](https://jakecoppinger.com)).
-
-Contact at [jake@jakecoppinger.com](mailto:jake@jakecoppinger.com) for a Gatho related subject,
-or [jake@jakecoppinger.com](mailto:jake@jakecoppinger.com) for anything else.
